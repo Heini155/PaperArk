@@ -2,6 +2,8 @@
 
 **Long-term digital storage on paper.**
 
+**Projektversion: 0.1 · Lizenz: [MIT](./LICENSE) · Archivformat: PaperArk v1**
+
 PaperArk archiviert kleine, wichtige Dateien als standardisierte QR-Codes auf DIN-A4-Seiten. Jede Seite enthält eine englische Wiederherstellungsanleitung und eine vollständige technische Beschreibung des Binärformats.
 
 Das Ziel: Ein zukünftiger Entwickler soll einen Decoder allein anhand des Ausdrucks implementieren können. Die ursprüngliche PaperArk-Software soll zur Wiederherstellung nicht erforderlich sein.
@@ -30,6 +32,24 @@ Alle Daten werden lokal verarbeitet. Keine Uploads, Telemetrie, externen Fonts, 
 Pro A4-Seite wird ein 130 mm großer QR-Code mit einer Quiet Zone von vier Modulen ausgegeben. Die Vorschau zeigt QR-Version, Kapazität, verwendete Bytes, Nutzungsgrad und Blocknummer. Metadaten, Original-SHA-256 und Formatspezifikation stehen auf jeder Seite.
 
 **Druckeinstellungen:** A4, tatsächliche Größe / 100 %, Schwarz auf Weiß, Browser-Kopf- und Fußzeilen deaktivieren. Alle Seiten aufbewahren. Einen echten Ausdruck vor der Archivierung zurückscannen und überprüfen; für dichte Codes sind scharfe Scans mit 600 dpi empfehlenswert.
+
+## Optionale Base32 Recovery Copy
+
+Unter **CREATE ARCHIVE → Add Base32 recovery copy** lässt sich zusätzlich zu den QR-Seiten eine menschen- und OCR-lesbare Sicherung ausgeben. Die Option ist standardmäßig ausgeschaltet. Sie verwendet [Base32 gemäß RFC 4648](https://www.rfc-editor.org/rfc/rfc4648.html#section-6) mit dem Alphabet `ABCDEFGHIJKLMNOPQRSTUVWXYZ234567` und `=`-Padding.
+
+Die Ausgabe kodiert die **exakten, bereits erzeugten QR-Blöcke einschließlich ihrer Header**, in Blockreihenfolge aneinandergehängt, als einen einzigen Base32-Datenstrom. Es gibt keine zweite Verarbeitung der Originaldatei, keine neuen Header und kein neues Archivformat. Padding steht nur am Ende des gesamten Datenstroms.
+
+Die zusätzlichen A4-Seiten folgen auf die QR-Seiten. Jede enthält Archive-ID, Seitennummer und englische Wiederherstellungshinweise. Der Datenbereich verwendet schwarze 11-pt-Monospace-Schrift ohne Ligaturen, 64 Zeichen pro Zeile und maximal 32 Datenzeilen pro Seite; nur die letzte Zeile darf kürzer sein. Die Seitenzahlen der Vorschau berücksichtigen die zusätzlichen Base32-Seiten.
+
+Zur Wiederherstellung unter **RESTORE ARCHIVE → Paste Base32 recovery data** ausschließlich die Datenzeilen aller Base32-Seiten in Seitenreihenfolge einfügen und **Import Base32 recovery data** anklicken. Leerzeichen, Tabs und Zeilen-/Seitenumbrüche werden ignoriert; ASCII-Kleinbuchstaben werden akzeptiert. Überschriften und Anleitung nicht mitkopieren. Ungültige Zeichen, falsches Padding und nicht-nullgesetzte Padding-Bits werden zurückgewiesen.
+
+Anschließend wie gewohnt **Restore & verify** verwenden. Base32- und QR-Import nutzen dieselbe Blockprüfung und Restore-Pipeline, einschließlich AES-GCM, Dekompression und Original-SHA-256. Bereits eingelesene identische QR-Blöcke werden als Duplikate erkannt. Ein fehlerhafter Base32-Import verändert die zuvor gesammelten Blöcke nicht.
+
+Für eine externe Implementierung: Nach RFC-4648-Decoding die vollständigen PaperArk-Blöcke nacheinander auslesen. Jeder Block ist `144 + N + P` Bytes lang; `N` und `P` stehen als unsigned Big-Endian-16-Bit-Felder an den blockrelativen Offsets 108 und 110. Danach gilt unverändert die auf den QR-Seiten gedruckte PaperArk-v1-Spezifikation. Die QR-Seiten mit dieser Spezifikation daher zusammen mit der Base32-Kopie aufbewahren.
+
+Die integrierten Selbsttests enthalten zusätzlich 20 Base32-Tests: RFC-Testvektoren, Binär-/Whitespace-/Padding-Prüfungen, Mehrseiten-Rekonstruktion und vollständige Base32-Archiv-Roundtrips mit und ohne Kompression und Verschlüsselung. Alle 65 Tests (45 bisherige und 20 zusätzliche) wurden in Chromium erfolgreich ausgeführt. Ein bedienter Roundtrip über vier Base32-Seiten mit gzip und Verschlüsselung lieferte ebenfalls eine byteidentische Download-Datei; die A4-Seitengeometrie wurde geprüft. Ein physischer Druck-/OCR-Rückscan ist damit nicht bestätigt.
+
+> Base32 is a redundant transport representation, not a new archive format.
 
 ## Archiv wiederherstellen
 
@@ -102,4 +122,10 @@ Zusätzlich rekonstruierte ein separater Python-Decoder Testarchive in allen vie
 | jsQR, Cozmo | 1.4.0 | Apache-2.0 |
 | fflate, Arjun Barrett | 0.8.2 | MIT |
 
-Die Lizenztexte der Bibliotheken sind in `paperark.html` enthalten und unter **ABOUT** einsehbar. Für den eigenen PaperArk-Anwendungscode ist bislang keine separate Projektlizenz festgelegt; die Bibliothekslizenzen gelten nicht automatisch für das gesamte Projekt.
+Die Lizenztexte der Bibliotheken sind in `paperark.html` enthalten und unter **ABOUT** einsehbar. Die Bibliotheken behalten ihre jeweiligen Lizenzen und Copyright-Hinweise.
+
+## Projektversion und Lizenz
+
+PaperArk trägt die Projektversion **0.1**. Die davon unabhängige Version des Binärformats bleibt **PaperArk Format Version 1**.
+
+Der PaperArk-Anwendungscode und die Projektdokumentation stehen unter der [MIT-Lizenz](./LICENSE). Copyright (c) 2026 Heiner (Heini155). Der vollständige Projektlizenztext ist zusätzlich in der eigenständig nutzbaren `paperark.html` unter **ABOUT → PaperArk MIT License** enthalten.
