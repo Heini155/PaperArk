@@ -4,21 +4,80 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src blob: data:; connect-src 'none'; font-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; worker-src 'none'">
-<meta name="application-version" content="0.1">
-<title>PaperArk 0.1 — Long-term digital storage on paper</title>
+<meta name="application-version" content="0.2">
+<title>PaperArk 0.2 — Long-term digital storage on paper</title>
 <style>
-:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#17221e;background:#f3f5f1;font-size:15px;line-height:1.5}*{box-sizing:border-box}body{margin:0}header,main,footer{max-width:1080px;margin:auto;padding:24px}header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:38px}h1{font-size:34px;letter-spacing:-1.5px;margin:0}h2{font-size:23px;margin:0 0 12px}h3{font-size:16px}p{margin:8px 0 16px}.subtitle{color:#52625a;margin:0}.local{font-size:12px;max-width:330px;border-left:3px solid #286047;padding-left:12px}nav{display:flex;gap:5px;flex-wrap:wrap;border-bottom:1px solid #ccd5ce;padding-bottom:15px;margin-bottom:25px}button,.download{border:1px solid #b8c6bd;border-radius:5px;background:white;color:#17221e;padding:10px 16px;font:inherit;cursor:pointer;text-decoration:none;display:inline-block}button:hover,.download:hover{background:#e9eee9}button:disabled{opacity:.55;cursor:wait}button[aria-pressed=true],button.primary{background:#214c39;color:white;border-color:#214c39}button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:3px solid #699a7a;outline-offset:3px}.panel{background:white;border:1px solid #d4ddd5;border-radius:9px;padding:26px}.grid{display:grid;grid-template-columns:1.2fr 1fr;gap:28px}.drop{border:2px dashed #bac9bd;border-radius:6px;padding:24px;text-align:center;background:#fafcf9}.drop.over{background:#dfece1;border-color:#214c39}label{display:block;margin:12px 0 5px;font-weight:600}label.check{font-weight:400}input[type=text],input[type=password],textarea,select{width:100%;border:1px solid #bcc9c0;border-radius:4px;padding:9px;background:#fff;color:#17221e;font:inherit}input[type=file]{max-width:100%}input[type=checkbox]{accent-color:#214c39}textarea{resize:vertical;min-height:120px}small,.muted{color:#53615a}.notice{background:#f1f5ef;border-left:3px solid #7f957c;padding:12px;margin:16px 0}.warning{background:#fff7e7;border-color:#b5892c;color:#684e12}.status{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px 0}.error{color:#a52323}.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 ui-monospace,Consolas,monospace}#specText{background:#f7f9f6;padding:20px;border:1px solid #d5ded5}details{margin-top:20px}summary{cursor:pointer}#archive{margin-top:24px}.sheet{background:white;color:black;width:190mm;min-height:277mm;margin:20px auto;padding:3mm 5mm;box-shadow:0 2px 12px #0002;break-after:page;font-family:Arial,Helvetica,sans-serif}.sheet:last-of-type{break-after:auto}.sheet h2{font-size:17pt;line-height:1;margin:0 0 2mm}.sheet .stamp{font-size:8pt;line-height:1.2;margin-bottom:2mm}.sheet .metadata{font:8pt/1.3 Arial,sans-serif;overflow-wrap:anywhere}.sheet .filename{font:7.6pt/1.3 Consolas,"Courier New",monospace}.sheet .hash{font:7.6pt/1.3 Consolas,monospace;overflow-wrap:anywhere}.qr{display:block;width:130mm;height:130mm;max-width:none;margin:2mm auto;shape-rendering:crispEdges}.block-caption{text-align:center;font-size:8pt;margin:0 0 2mm}.recovery{border-top:1px solid black;padding-top:2mm;font:8pt/1.3 Arial,sans-serif}.recovery h3{margin:0 0 1mm;font-size:9pt}.recovery pre{font:7pt/1.15 Consolas,"Courier New",monospace;margin:1mm 0;white-space:pre-wrap;overflow-wrap:anywhere}.recovery p{margin:1mm 0}.sheet-tools{text-align:center}.sheet-tools button{font-size:12px}.fileinfo{overflow-wrap:anywhere;margin-top:15px}#testOutput{max-height:500px;overflow:auto}footer{font-size:12px;color:#53615a;padding-top:0}[hidden]{display:none!important}@media(max-width:760px){header{display:block}.local{margin-top:16px}.grid{grid-template-columns:1fr}main{padding:14px}.panel{padding:18px}#archive{overflow:auto}.sheet{margin-left:0}nav button{font-size:12px;padding:8px}}
-@page{size:A4;margin:10mm}
-@media print{html,body{background:white;color:black;margin:0;padding:0}body>header,body>footer,main>nav,main>.panel,.sheet-tools,#previewTitle{display:none!important}main,#archive{display:block!important;width:auto;max-width:none;margin:0;padding:0;overflow:visible}.sheet{width:190mm;height:277mm;min-height:0;padding:3mm 5mm;margin:0;box-shadow:none;overflow:visible;break-inside:avoid;page-break-after:always}.sheet:last-of-type{page-break-after:auto}.qr{width:130mm;height:130mm}a{color:black;text-decoration:none}}
-/* Optional Base32 transport pages: fixed rows/columns, no decorative data marks. */
+:root{--bg:#0a0f1a;--panel:#0f1728;--panel2:#0c1421;--line:#1d2c45;--line2:#2b4166;--text:#cddcec;--dim:#7d92ac;--amber:#ffb454;--cyan:#59d0ff;--ok:#7ee787;--err:#ff8585;--mono:ui-monospace,"Cascadia Mono","JetBrains Mono",Consolas,"Courier New",monospace}
+html{color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);background-image:linear-gradient(rgba(43,65,102,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(43,65,102,.10) 1px,transparent 1px);background-size:28px 28px;color:var(--text);font-family:var(--mono);font-size:14px;line-height:1.55}
+header,main,footer{max-width:1080px;margin:auto;padding:24px}
+header{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-top:38px;border-bottom:2px solid var(--amber)}
+h1{font-size:30px;letter-spacing:3px;margin:0;color:var(--amber);text-transform:uppercase}
+h2{font-size:20px;letter-spacing:2px;margin:0 0 12px;text-transform:uppercase;color:var(--cyan)}
+h3{font-size:15px;letter-spacing:1px;text-transform:uppercase}
+p{margin:8px 0 16px}
+.subtitle{color:var(--dim);margin:4px 0 0;letter-spacing:1px}
+.local{font-size:11px;max-width:340px;border-left:2px solid var(--amber);padding-left:12px;color:var(--dim)}
+nav{display:flex;gap:6px;flex-wrap:wrap;border-bottom:1px solid var(--line);padding-bottom:15px;margin-bottom:25px}
+button,.download{border:1px solid var(--line2);border-radius:0;background:transparent;color:var(--amber);padding:10px 18px;font:inherit;font-size:13px;letter-spacing:1px;text-transform:uppercase;cursor:pointer;text-decoration:none;display:inline-block;transition:background .12s,color .12s}
+button:hover,.download:hover{background:var(--amber);color:#12100a}
+button:disabled{opacity:.4;cursor:wait}
+button[aria-pressed=true],button.primary{background:var(--amber);color:#12100a;border-color:var(--amber)}
+button:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible,a:focus-visible{outline:2px solid var(--cyan);outline-offset:2px}
+.panel{background:var(--panel);border:1px solid var(--line);border-top:2px solid var(--line2);padding:26px}
+.grid{display:grid;grid-template-columns:1.2fr 1fr;gap:28px}
+.drop{border:1px dashed var(--line2);padding:24px;text-align:center;background:var(--panel2)}
+.drop.over{background:#14213a;border-color:var(--amber)}
+label{display:block;margin:12px 0 5px;font-weight:600;font-size:12px;letter-spacing:1px;text-transform:uppercase;color:var(--dim)}
+label.check{font-weight:400;text-transform:none;letter-spacing:0;color:var(--text);font-size:13px}
+input[type=text],input[type=password],textarea,select{width:100%;border:1px solid var(--line2);border-radius:0;padding:9px;background:#0a1322;color:var(--text);font:inherit}
+input[type=file]{max-width:100%;color:var(--dim)}
+input[type=checkbox],input[type=radio]{accent-color:var(--amber)}
+textarea{resize:vertical;min-height:120px}
+small,.muted{color:var(--dim)}
+.notice{background:var(--panel2);border-left:2px solid var(--cyan);padding:12px;margin:16px 0}
+.warning{background:#1c1608;border-left-color:var(--amber);color:#e8c98f}
+.status{white-space:pre-wrap;overflow-wrap:anywhere;padding:12px 0}
+.error{color:var(--err)}
+.actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+pre{white-space:pre-wrap;overflow-wrap:anywhere;font:12px/1.55 var(--mono)}
+#specText{background:var(--panel2);padding:20px;border:1px solid var(--line)}
+details{margin-top:20px}
+summary{cursor:pointer;color:var(--cyan)}
+#archive{margin-top:24px}
+.sheet{background:white;color:black;width:190mm;min-height:277mm;margin:20px auto;padding:3mm 5mm;box-shadow:0 2px 12px #0006;break-after:page;font-family:Arial,Helvetica,sans-serif}
+.sheet:last-of-type{break-after:auto}
+.sheet h2{font-size:17pt;line-height:1;margin:0 0 2mm;color:black}
+.sheet .stamp{font-size:8pt;line-height:1.2;margin-bottom:2mm}
+.sheet .metadata{font:8pt/1.3 Arial,sans-serif;overflow-wrap:anywhere}
+.sheet .filename{font:7.6pt/1.3 Consolas,"Courier New",monospace}
+.sheet .hash{font:7.6pt/1.3 Consolas,monospace;overflow-wrap:anywhere}
+.qr{display:block;width:130mm;height:130mm;max-width:none;margin:2mm auto;shape-rendering:crispEdges}
+.block-caption{text-align:center;font-size:8pt;margin:2mm 0 0}
+.recovery{border-top:1px solid black;padding-top:2mm;font:8pt/1.3 Arial,sans-serif}
+.recovery h3{margin:0 0 1mm;font-size:9pt}
+.recovery pre{font:7pt/1.15 Consolas,"Courier New",monospace;margin:1mm 0;white-space:pre-wrap;overflow-wrap:anywhere}
+.recovery p{margin:1mm 0}
+.sheet-tools{text-align:center}
+.sheet-tools button{font-size:12px}
+.fileinfo{overflow-wrap:anywhere;margin-top:15px}
+#testOutput{max-height:500px;overflow:auto}
+footer{font-size:12px;color:var(--dim);padding-top:0}
+[hidden]{display:none!important}
+/* Base32 transport sheets: data column flush right; 25 mm left margin for hole punching. */
+.base32-sheet{padding:3mm 8mm 3mm 25mm}
 .base32-sheet .base32-label{font:8.5pt/1.25 Arial,sans-serif;margin:1mm 0}
-.base32-sheet .base32-instructions{font:8pt/1.2 "Courier New",Consolas,monospace;white-space:pre-wrap;margin:3mm 0;overflow-wrap:normal}
-.base32-sheet .base32-data{font:11pt/1.3 "Courier New",Consolas,monospace;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;letter-spacing:0;text-align:left;white-space:pre;overflow-wrap:normal;word-break:normal;color:#000;background:#fff;margin:3mm 0}
+.base32-sheet .base32-instructions{font:7pt/1.15 "Courier New",Consolas,monospace;white-space:pre-wrap;margin:2mm 0;overflow-wrap:normal}
+.base32-sheet .base32-data{font:8.5pt/1.3 "Courier New",Consolas,monospace;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;letter-spacing:0;text-align:left;white-space:pre;overflow-wrap:normal;word-break:normal;color:#000;background:#fff;margin:2mm 0 0 auto;width:max-content}
 #base32Input{font-family:"Courier New",Consolas,monospace;font-variant-ligatures:none}
+@media(max-width:760px){header{display:block}.local{margin-top:16px}main{padding:14px}.panel{padding:18px}.grid{grid-template-columns:1fr}#archive{overflow:auto}.sheet{margin-left:0}nav button{font-size:12px}}
+@page{size:A4;margin:10mm}
+@media print{html,body{background:white;color:black;margin:0;padding:0;background-image:none}body>header,body>footer,main>nav,main>.panel,.sheet-tools,#previewTitle{display:none!important}main,#archive{display:block!important;width:auto;max-width:none;margin:0;padding:0;overflow:visible}.sheet{width:190mm;height:277mm;min-height:0;padding:3mm 5mm;margin:0;box-shadow:none;overflow:visible;break-inside:avoid;page-break-after:always}.sheet:last-of-type{page-break-after:auto}.base32-sheet{padding:3mm 8mm 3mm 25mm}.qr{width:130mm;height:130mm}a{color:black;text-decoration:none}}
 </style>
 </head>
 <body>
-<header><div><h1>PaperArk 0.1</h1><p class="subtitle">Long-term digital storage on paper</p></div><div class="local">All processing happens locally in your browser.<br>No data is uploaded or transmitted.</div></header>
+<header><div><h1>PaperArk 0.2</h1><p class="subtitle">Long-term digital storage on paper</p></div><div class="local">All processing happens locally in your browser.<br>No data is uploaded or transmitted.</div></header>
 <main>
 <nav aria-label="Main sections"><button data-tab="create" aria-pressed="true">CREATE ARCHIVE</button><button data-tab="restore" aria-pressed="false">RESTORE ARCHIVE</button><button data-tab="spec" aria-pressed="false">FORMAT SPECIFICATION</button><button data-tab="about" aria-pressed="false">ABOUT</button></nav>
 <section id="create" class="panel"><h2>Create a paper archive</h2><p class="muted">Small, important files. Open standards. Recovery instructions on every sheet.</p><div class="grid"><div>
@@ -28,13 +87,16 @@
 <label class="check"><input id="compress" type="checkbox" checked> gzip compression</label><label class="check"><input id="encrypt" type="checkbox"> AES-256-GCM encryption</label>
 <div id="passwordBox" hidden><label for="password">Password</label><input id="password" type="password" autocomplete="off" spellcheck="false"><label for="confirmPassword">Confirm password</label><input id="confirmPassword" type="password" autocomplete="off" spellcheck="false"><p class="notice warning">Without the password or key, encrypted archives cannot be recovered. Keep the password separately. It is never printed.</p></div>
 <label for="ecc">QR error correction</label><select id="ecc"><option value="L">L — low</option><option value="M" selected>M — medium (default)</option><option value="Q">Q — quartile</option><option value="H">H — high</option></select>
-<label class="check"><input id="base32Copy" type="checkbox"> Add Base32 recovery copy</label><small>Prints an additional RFC 4648 Base32 representation for manual/OCR recovery.</small>
-<div id="estimate" class="notice" aria-live="polite"></div><p class="muted">One 130 mm QR code per A4 sheet. Up to version 40. Maximum 128 sheets and 8 MiB input in this implementation.</p><button id="createBtn" class="primary">Create Paper Archive</button><div id="createStatus" class="status" role="status"></div><button id="printBtn" hidden>Print Archive</button><p id="printAdvice" hidden class="notice">Print A4 at 100% scale, black on white. Disable browser headers and footers. Keep all pages. Test a scan of the actual print before relying on it.</p>
+<label>Transport medium</label>
+<label class="check"><input id="mediumQr" type="radio" name="medium" checked> QR Code — ISO/IEC 18004 binary symbol</label>
+<label class="check"><input id="mediumB32" type="radio" name="medium"> Base32 Sheet — text transport with Reed-Solomon error correction</label>
+<small>Base32 sheets carry the same PaperArk blocks as printable text: RS(255,215) over GF(256), symbol interleaving, and a per-line CRC32 carrying a 13-bit line number. They survive damaged or deleted lines and can be recovered by OCR or by hand.</small>
+<div id="estimate" class="notice" aria-live="polite"></div><p class="muted" id="mediumHint">One 130 mm QR code per A4 sheet. Up to version 40. Maximum 128 sheets and 8 MiB input in this implementation.</p><button id="createBtn" class="primary">Create Paper Archive</button><div id="createStatus" class="status" role="status"></div><button id="printBtn" hidden>Print Archive</button><p id="printAdvice" hidden class="notice">Print A4 at 100% scale, black on white. Disable browser headers and footers. Keep all pages. Test a scan of the actual print before relying on it.</p>
 </div></div></section>
-<section id="restore" class="panel" hidden><h2>Restore an archive</h2><p>Select photographs or scans, one QR code per image. Multiple images may be selected, in any order. PNG and JPEG recommended; rasterize PDF pages first.</p><label for="images">QR image files</label><input id="images" type="file" accept="image/*" multiple><p class="muted">The decoder uses raw QR bytes, never a text conversion. Use well-lit, straight, sharply focused images; 600 dpi scans are recommended for dense codes.</p><div id="scanStatus" class="status" role="status"></div><label for="base32Input">Paste Base32 recovery data</label><textarea id="base32Input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="characters" placeholder="Paste only the Base32 data lines from all recovery pages, in page order."></textarea><p class="muted">RFC 4648 Base32. Whitespace is ignored; lowercase letters are accepted. Include the final = padding. Exclude page headings and instructions.</p><button id="importBase32Btn">Import Base32 recovery data</button><div id="base32Status" class="status" role="status"></div>
+<section id="restore" class="panel" hidden><h2>Restore an archive</h2><p>Select photographs or scans, one QR code per image. Multiple images may be selected, in any order. PNG and JPEG recommended; rasterize PDF pages first.</p><label for="images">QR image files</label><input id="images" type="file" accept="image/*" multiple><p class="muted">The decoder uses raw QR bytes, never a text conversion. Use well-lit, straight, sharply focused images; 600 dpi scans are recommended for dense codes.</p><div id="scanStatus" class="status" role="status"></div><label for="base32Input">Paste Base32 transport data</label><textarea id="base32Input" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="characters" placeholder="Paste the Base32 transport lines from all sheets, in any order. Line breaks optional."></textarea><p class="muted">64 data characters + 8 CRC characters per line. Whitespace and line breaks are ignored; lowercase letters are accepted. Damaged lines are corrected by Reed-Solomon; paste everything you can read, even from damaged sheets.</p><button id="importBase32Btn">Import Base32 transport data</button><div id="base32Status" class="status" role="status"></div>
 <div id="blockStatus" class="notice" aria-live="polite">No blocks collected.</div><label for="restorePassword">Password (only for encrypted archives)</label><input id="restorePassword" type="password" autocomplete="off" spellcheck="false"><div class="actions"><button id="restoreBtn" class="primary" disabled>Restore &amp; verify</button><button id="resetBtn">Clear collected blocks</button></div><div id="restoreStatus" class="status" role="status"></div><a id="download" class="download" hidden>Download restored file</a></section>
 <section id="spec" class="panel" hidden><h2>PaperArk Format Version 1</h2><p>The normative specification below is also included on every printed page. Libraries are only implementation tools; they are not needed to interpret the format.</p><div class="actions"><button id="copySpec">Copy specification</button><button id="saveSpec">Download specification.txt</button></div><div id="specStatus" role="status"></div><pre id="specText" tabindex="0"></pre></section>
-<section id="about" class="panel" hidden><h2>Built for a future reader</h2><p>PaperArk stores small digital files as ordinary QR codes, together with enough English instructions to write a new decoder. Prefer boring, standardized, well-documented technology over clever technology.</p><h3>Version and license</h3><p>PaperArk application version: 0.1. Archive format: PaperArk Format Version 1. Copyright (c) 2026 Heiner (Heini155). PaperArk application code and documentation are licensed under the MIT License. Embedded libraries retain their respective licenses and copyright notices.</p><details><summary>PaperArk MIT License</summary><pre id="projectLicense">MIT License
+<section id="about" class="panel" hidden><h2>Built for a future reader</h2><p>PaperArk stores small digital files as ordinary QR codes or as Base32 text sheets, together with enough English instructions to write a new decoder. Prefer boring, standardized, well-documented technology over clever technology.</p><h3>Version and license</h3><p>PaperArk application version: 0.2. Archive format: PaperArk Format Version 1. Copyright (c) 2026 Heiner (Heini155). PaperArk application code and documentation are licensed under the MIT License. Embedded libraries retain their respective licenses and copyright notices.</p><details><summary>PaperArk MIT License</summary><pre id="projectLicense">MIT License
 
 Copyright (c) 2026 Heiner (Heini155)
 
@@ -307,7 +369,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.</pre></details></section>
 <h2 id="previewTitle" hidden>Print preview · A4</h2><div id="archive"></div>
-</main><footer>PaperArk 0.1 / Format v1 · Preserve the instructions alongside the data.</footer>
+</main><footer>PaperArk 0.2 / Format v1 · Preserve the instructions alongside the data.</footer>
 <script>
 //---------------------------------------------------------------------
 //
@@ -12716,7 +12778,7 @@ function findAlignmentPattern(matrix, alignmentPatternQuads, topRight, topLeft, 
 !function(f){typeof module!='undefined'&&typeof exports=='object'?module.exports=f():typeof define!='undefined'&&define.amd?define(f):(typeof self!='undefined'?self:this).fflate=f()}(function(){var _e={};"use strict";var t=(typeof module!='undefined'&&typeof exports=='object'?function(_f){"use strict";var e,t=";var __w=require('worker_threads');__w.parentPort.on('message',function(m){onmessage({data:m})}),postMessage=function(m,t){__w.parentPort.postMessage(m,t)},close=process.exit;self=global";try{e=require("worker_threads").Worker}catch(e){}exports.default=e?function(r,n,o,a,s){var u=!1,i=new e(r+t,{eval:!0}).on("error",(function(e){return s(e,null)})).on("message",(function(e){return s(null,e)})).on("exit",(function(e){e&&!u&&s(Error("exited with code "+e),null)}));return i.postMessage(o,a),i.terminate=function(){return u=!0,e.prototype.terminate.call(i)},i}:function(e,t,r,n,o){setImmediate((function(){return o(Error("async operations unsupported - update to Node 12+ (or Node 10-11 with the --experimental-worker CLI flag)"),null)}));var a=function(){};return{terminate:a,postMessage:a}};return _f}:function(_f){"use strict";var e={};_f.default=function(r,t,s,a,n){var o=new Worker(e[t]||(e[t]=URL.createObjectURL(new Blob([r+';addEventListener("error",function(e){e=e.error;postMessage({$e$:[e.message,e.code,e.stack]})})'],{type:"text/javascript"}))));return o.onmessage=function(e){var r=e.data,t=r.$e$;if(t){var s=Error(t[0]);s.code=t[1],s.stack=t[2],n(s,null)}else n(null,r)},o.postMessage(s,a),o};return _f})({}),n=Uint8Array,r=Uint16Array,e=Int32Array,i=new n([0,0,0,0,0,0,0,0,1,1,1,1,2,2,2,2,3,3,3,3,4,4,4,4,5,5,5,5,0,0,0,0]),o=new n([0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,0,0]),s=new n([16,17,18,0,8,7,9,6,10,5,11,4,12,3,13,2,14,1,15]),a=function(t,n){for(var i=new r(31),o=0;o<31;++o)i[o]=n+=1<<t[o-1];var s=new e(i[30]);for(o=1;o<30;++o)for(var a=i[o];a<i[o+1];++a)s[a]=a-i[o]<<5|o;return{b:i,r:s}},u=a(i,2),h=u.b,f=u.r;h[28]=258,f[258]=28;for(var l=a(o,0),c=l.b,p=l.r,v=new r(32768),d=0;d<32768;++d){var g=(43690&d)>>1|(21845&d)<<1;v[d]=((65280&(g=(61680&(g=(52428&g)>>2|(13107&g)<<2))>>4|(3855&g)<<4))>>8|(255&g)<<8)>>1}var y=function(t,n,e){for(var i=t.length,o=0,s=new r(n);o<i;++o)t[o]&&++s[t[o]-1];var a,u=new r(n);for(o=1;o<n;++o)u[o]=u[o-1]+s[o-1]<<1;if(e){a=new r(1<<n);var h=15-n;for(o=0;o<i;++o)if(t[o])for(var f=o<<4|t[o],l=n-t[o],c=u[t[o]-1]++<<l,p=c|(1<<l)-1;c<=p;++c)a[v[c]>>h]=f}else for(a=new r(i),o=0;o<i;++o)t[o]&&(a[o]=v[u[t[o]-1]++]>>15-t[o]);return a},m=new n(288);for(d=0;d<144;++d)m[d]=8;for(d=144;d<256;++d)m[d]=9;for(d=256;d<280;++d)m[d]=7;for(d=280;d<288;++d)m[d]=8;var b=new n(32);for(d=0;d<32;++d)b[d]=5;var w=y(m,9,0),x=y(m,9,1),z=y(b,5,0),k=y(b,5,1),M=function(t){for(var n=t[0],r=1;r<t.length;++r)t[r]>n&&(n=t[r]);return n},S=function(t,n,r){var e=n/8|0;return(t[e]|t[e+1]<<8)>>(7&n)&r},A=function(t,n){var r=n/8|0;return(t[r]|t[r+1]<<8|t[r+2]<<16)>>(7&n)},T=function(t){return(t+7)/8|0},D=function(t,r,e){return(null==r||r<0)&&(r=0),(null==e||e>t.length)&&(e=t.length),new n(t.subarray(r,e))};_e.FlateErrorCode={UnexpectedEOF:0,InvalidBlockType:1,InvalidLengthLiteral:2,InvalidDistance:3,StreamFinished:4,NoStreamHandler:5,InvalidHeader:6,NoCallback:7,InvalidUTF8:8,ExtraFieldTooLong:9,InvalidDate:10,FilenameTooLong:11,StreamFinishing:12,InvalidZipData:13,UnknownCompressionMethod:14};var C=["unexpected EOF","invalid block type","invalid length/literal","invalid distance","stream finished","no stream handler",,"no callback","invalid UTF-8 data","extra field too long","date not in range 1980-2099","filename too long","stream finishing","invalid zip data"],I=function(t,n,r){var e=Error(n||C[t]);if(e.code=t,Error.captureStackTrace&&Error.captureStackTrace(e,I),!r)throw e;return e},U=function(t,r,e,a){var u=t.length,f=a?a.length:0;if(!u||r.f&&!r.l)return e||new n(0);var l=!e,p=l||2!=r.i,v=r.i;l&&(e=new n(3*u));var d=function(t){var r=e.length;if(t>r){var i=new n(Math.max(2*r,t));i.set(e),e=i}},g=r.f||0,m=r.p||0,b=r.b||0,w=r.l,z=r.d,C=r.m,U=r.n,F=8*u;do{if(!w){g=S(t,m,1);var E=S(t,m+1,3);if(m+=3,!E){var Z=t[(J=T(m)+4)-4]|t[J-3]<<8,q=J+Z;if(q>u){v&&I(0);break}p&&d(b+Z),e.set(t.subarray(J,q),b),r.b=b+=Z,r.p=m=8*q,r.f=g;continue}if(1==E)w=x,z=k,C=9,U=5;else if(2==E){var O=S(t,m,31)+257,G=S(t,m+10,15)+4,L=O+S(t,m+5,31)+1;m+=14;for(var H=new n(L),j=new n(19),N=0;N<G;++N)j[s[N]]=S(t,m+3*N,7);m+=3*G;var P=M(j),B=(1<<P)-1,Y=y(j,P,1);for(N=0;N<L;){var J,K=Y[S(t,m,B)];if(m+=15&K,(J=K>>4)<16)H[N++]=J;else{var Q=0,R=0;for(16==J?(R=3+S(t,m,3),m+=2,Q=H[N-1]):17==J?(R=3+S(t,m,7),m+=3):18==J&&(R=11+S(t,m,127),m+=7);R--;)H[N++]=Q}}var V=H.subarray(0,O),W=H.subarray(O);C=M(V),U=M(W),w=y(V,C,1),z=y(W,U,1)}else I(1);if(m>F){v&&I(0);break}}p&&d(b+131072);for(var X=(1<<C)-1,$=(1<<U)-1,_=m;;_=m){var tt=(Q=w[A(t,m)&X])>>4;if((m+=15&Q)>F){v&&I(0);break}if(Q||I(2),tt<256)e[b++]=tt;else{if(256==tt){_=m,w=null;break}var nt=tt-254;tt>264&&(nt=S(t,m,(1<<(it=i[N=tt-257]))-1)+h[N],m+=it);var rt=z[A(t,m)&$],et=rt>>4;if(rt||I(3),m+=15&rt,W=c[et],et>3){var it=o[et];W+=A(t,m)&(1<<it)-1,m+=it}if(m>F){v&&I(0);break}p&&d(b+131072);var ot=b+nt;if(b<W){var st=f-W,at=Math.min(W,ot);for(st+b<0&&I(3);b<at;++b)e[b]=a[st+b]}for(;b<ot;++b)e[b]=e[b-W]}}r.l=w,r.p=_,r.b=b,r.f=g,w&&(g=1,r.m=C,r.d=z,r.n=U)}while(!g);return b!=e.length&&l?D(e,0,b):e.subarray(0,b)},F=function(t,n,r){var e=n/8|0;t[e]|=r<<=7&n,t[e+1]|=r>>8},E=function(t,n,r){var e=n/8|0;t[e]|=r<<=7&n,t[e+1]|=r>>8,t[e+2]|=r>>16},Z=function(t,e){for(var i=[],o=0;o<t.length;++o)t[o]&&i.push({s:o,f:t[o]});var s=i.length,a=i.slice();if(!s)return{t:N,l:0};if(1==s){var u=new n(i[0].s+1);return u[i[0].s]=1,{t:u,l:1}}i.sort((function(t,n){return t.f-n.f})),i.push({s:-1,f:25001});var h=i[0],f=i[1],l=0,c=1,p=2;for(i[0]={s:-1,f:h.f+f.f,l:h,r:f};c!=s-1;)h=i[i[l].f<i[p].f?l++:p++],f=i[l!=c&&i[l].f<i[p].f?l++:p++],i[c++]={s:-1,f:h.f+f.f,l:h,r:f};var v=a[0].s;for(o=1;o<s;++o)a[o].s>v&&(v=a[o].s);var d=new r(v+1),g=q(i[c-1],d,0);if(g>e){o=0;var y=0,m=g-e,b=1<<m;for(a.sort((function(t,n){return d[n.s]-d[t.s]||t.f-n.f}));o<s;++o){var w=a[o].s;if(!(d[w]>e))break;y+=b-(1<<g-d[w]),d[w]=e}for(y>>=m;y>0;){var x=a[o].s;d[x]<e?y-=1<<e-d[x]++-1:++o}for(;o>=0&&y;--o){var z=a[o].s;d[z]==e&&(--d[z],++y)}g=e}return{t:new n(d),l:g}},q=function(t,n,r){return-1==t.s?Math.max(q(t.l,n,r+1),q(t.r,n,r+1)):n[t.s]=r},O=function(t){for(var n=t.length;n&&!t[--n];);for(var e=new r(++n),i=0,o=t[0],s=1,a=function(t){e[i++]=t},u=1;u<=n;++u)if(t[u]==o&&u!=n)++s;else{if(!o&&s>2){for(;s>138;s-=138)a(32754);s>2&&(a(s>10?s-11<<5|28690:s-3<<5|12305),s=0)}else if(s>3){for(a(o),--s;s>6;s-=6)a(8304);s>2&&(a(s-3<<5|8208),s=0)}for(;s--;)a(o);s=1,o=t[u]}return{c:e.subarray(0,i),n:n}},G=function(t,n){for(var r=0,e=0;e<n.length;++e)r+=t[e]*n[e];return r},L=function(t,n,r){var e=r.length,i=T(n+2);t[i]=255&e,t[i+1]=e>>8,t[i+2]=255^t[i],t[i+3]=255^t[i+1];for(var o=0;o<e;++o)t[i+o+4]=r[o];return 8*(i+4+e)},H=function(t,n,e,a,u,h,f,l,c,p,v){F(n,v++,e),++u[256];for(var d=Z(u,15),g=d.t,x=d.l,k=Z(h,15),M=k.t,S=k.l,A=O(g),T=A.c,D=A.n,C=O(M),I=C.c,U=C.n,q=new r(19),H=0;H<T.length;++H)++q[31&T[H]];for(H=0;H<I.length;++H)++q[31&I[H]];for(var j=Z(q,7),N=j.t,P=j.l,B=19;B>4&&!N[s[B-1]];--B);var Y,J,K,Q,R=p+5<<3,V=G(u,m)+G(h,b)+f,W=G(u,g)+G(h,M)+f+14+3*B+G(q,N)+2*q[16]+3*q[17]+7*q[18];if(c>=0&&R<=V&&R<=W)return L(n,v,t.subarray(c,c+p));if(F(n,v,1+(W<V)),v+=2,W<V){Y=y(g,x,0),J=g,K=y(M,S,0),Q=M;var X=y(N,P,0);for(F(n,v,D-257),F(n,v+5,U-1),F(n,v+10,B-4),v+=14,H=0;H<B;++H)F(n,v+3*H,N[s[H]]);v+=3*B;for(var $=[T,I],_=0;_<2;++_){var tt=$[_];for(H=0;H<tt.length;++H)F(n,v,X[rt=31&tt[H]]),v+=N[rt],rt>15&&(F(n,v,tt[H]>>5&127),v+=tt[H]>>12)}}else Y=w,J=m,K=z,Q=b;for(H=0;H<l;++H){var nt=a[H];if(nt>255){var rt;E(n,v,Y[257+(rt=nt>>18&31)]),v+=J[rt+257],rt>7&&(F(n,v,nt>>23&31),v+=i[rt]);var et=31&nt;E(n,v,K[et]),v+=Q[et],et>3&&(E(n,v,nt>>5&8191),v+=o[et])}else E(n,v,Y[nt]),v+=J[nt]}return E(n,v,Y[256]),v+J[256]},j=new e([65540,131080,131088,131104,262176,1048704,1048832,2114560,2117632]),N=new n(0),P=function(t,s,a,u,h,l){var c=l.z||t.length,v=new n(u+c+5*(1+Math.ceil(c/7e3))+h),d=v.subarray(u,v.length-h),g=l.l,y=7&(l.r||0);if(s){y&&(d[0]=l.r>>3);for(var m=j[s-1],b=m>>13,w=8191&m,x=(1<<a)-1,z=l.p||new r(32768),k=l.h||new r(x+1),M=Math.ceil(a/3),S=2*M,A=function(n){return(t[n]^t[n+1]<<M^t[n+2]<<S)&x},C=new e(25e3),I=new r(288),U=new r(32),F=0,E=0,Z=l.i||0,q=0,O=l.w||0,G=0;Z+2<c;++Z){var N=A(Z),P=32767&Z,B=k[N];if(z[P]=B,k[N]=P,O<=Z){var Y=c-Z;if((F>7e3||q>24576)&&(Y>423||!g)){y=H(t,d,0,C,I,U,E,q,G,Z-G,y),q=F=E=0,G=Z;for(var J=0;J<286;++J)I[J]=0;for(J=0;J<30;++J)U[J]=0}var K=2,Q=0,R=w,V=P-B&32767;if(Y>2&&N==A(Z-V))for(var W=Math.min(b,Y)-1,X=Math.min(32767,Z),$=Math.min(258,Y);V<=X&&--R&&P!=B;){if(t[Z+K]==t[Z+K-V]){for(var _=0;_<$&&t[Z+_]==t[Z+_-V];++_);if(_>K){if(K=_,Q=V,_>W)break;var tt=Math.min(V,_-2),nt=0;for(J=0;J<tt;++J){var rt=Z-V+J&32767,et=rt-z[rt]&32767;et>nt&&(nt=et,B=rt)}}}V+=(P=B)-(B=z[P])&32767}if(Q){C[q++]=268435456|f[K]<<18|p[Q];var it=31&f[K],ot=31&p[Q];E+=i[it]+o[ot],++I[257+it],++U[ot],O=Z+K,++F}else C[q++]=t[Z],++I[t[Z]]}}for(Z=Math.max(Z,O);Z<c;++Z)C[q++]=t[Z],++I[t[Z]];y=H(t,d,g,C,I,U,E,q,G,Z-G,y),g||(l.r=7&y|d[y/8|0]<<3,y-=7,l.h=k,l.p=z,l.i=Z,l.w=O)}else{for(Z=l.w||0;Z<c+g;Z+=65535){var st=Z+65535;st>=c&&(d[y/8|0]=g,st=c),y=L(d,y+1,t.subarray(Z,st))}l.i=c}return D(v,0,u+T(y)+h)},B=function(){for(var t=new Int32Array(256),n=0;n<256;++n){for(var r=n,e=9;--e;)r=(1&r&&-306674912)^r>>>1;t[n]=r}return t}(),Y=function(){var t=-1;return{p:function(n){for(var r=t,e=0;e<n.length;++e)r=B[255&r^n[e]]^r>>>8;t=r},d:function(){return~t}}},J=function(){var t=1,n=0;return{p:function(r){for(var e=t,i=n,o=0|r.length,s=0;s!=o;){for(var a=Math.min(s+2655,o);s<a;++s)i+=e+=r[s];e=(65535&e)+15*(e>>16),i=(65535&i)+15*(i>>16)}t=e,n=i},d:function(){return(255&(t%=65521))<<24|(65280&t)<<8|(255&(n%=65521))<<8|n>>8}}},K=function(t,r,e,i,o){if(!o&&(o={l:1},r.dictionary)){var s=r.dictionary.subarray(-32768),a=new n(s.length+t.length);a.set(s),a.set(t,s.length),t=a,o.w=s.length}return P(t,null==r.level?6:r.level,null==r.mem?o.l?Math.ceil(1.5*Math.max(8,Math.min(13,Math.log(t.length)))):20:12+r.mem,e,i,o)},Q=function(t,n){var r={};for(var e in t)r[e]=t[e];for(var e in n)r[e]=n[e];return r},R=function(t,n,r){for(var e=t(),i=""+t,o=i.slice(i.indexOf("[")+1,i.lastIndexOf("]")).replace(/\s+/g,"").split(","),s=0;s<e.length;++s){var a=e[s],u=o[s];if("function"==typeof a){n+=";"+u+"=";var h=""+a;if(a.prototype)if(-1!=h.indexOf("[native code]")){var f=h.indexOf(" ",8)+1;n+=h.slice(f,h.indexOf("(",f))}else for(var l in n+=h,a.prototype)n+=";"+u+".prototype."+l+"="+a.prototype[l];else n+=h}else r[u]=a}return n},V=[],W=function(t){var n=[];for(var r in t)t[r].buffer&&n.push((t[r]=new t[r].constructor(t[r])).buffer);return n},X=function(n,r,e,i){if(!V[e]){for(var o="",s={},a=n.length-1,u=0;u<a;++u)o=R(n[u],o,s);V[e]={c:R(n[a],o,s),e:s}}var h=Q({},V[e].e);return(0,t.default)(V[e].c+";onmessage=function(e){for(var k in e.data)self[k]=e.data[k];onmessage="+r+"}",e,h,W(h),i)},$=function(){return[n,r,e,i,o,s,h,c,x,k,v,C,y,M,S,A,T,D,I,U,Tt,it,ot]},_=function(){return[n,r,e,i,o,s,f,p,w,m,z,b,v,j,N,y,F,E,Z,q,O,G,L,H,T,D,P,K,kt,it]},tt=function(){return[pt,gt,ct,Y,B]},nt=function(){return[vt,dt]},rt=function(){return[yt,ct,J]},et=function(){return[mt]},it=function(t){return postMessage(t,[t.buffer])},ot=function(t){return t&&{out:t.size&&new n(t.size),dictionary:t.dictionary}},st=function(t,n,r,e,i,o){var s=X(r,e,i,(function(t,n){s.terminate(),o(t,n)}));return s.postMessage([t,n],n.consume?[t.buffer]:[]),function(){s.terminate()}},at=function(t){return t.ondata=function(t,n){return postMessage([t,n],[t.buffer])},function(n){n.data.length?(t.push(n.data[0],n.data[1]),postMessage([n.data[0].length])):t.flush()}},ut=function(t,n,r,e,i,o,s){var a,u=X(t,e,i,(function(t,r){t?(u.terminate(),n.ondata.call(n,t)):Array.isArray(r)?1==r.length?(n.queuedSize-=r[0],n.ondrain&&n.ondrain(r[0])):(r[1]&&u.terminate(),n.ondata.call(n,t,r[0],r[1])):s(r)}));u.postMessage(r),n.queuedSize=0,n.push=function(t,r){n.ondata||I(5),a&&n.ondata(I(4,0,1),null,!!r),n.queuedSize+=t.length,u.postMessage([t,a=r],[t.buffer])},n.terminate=function(){u.terminate()},o&&(n.flush=function(){u.postMessage([])})},ht=function(t,n){return t[n]|t[n+1]<<8},ft=function(t,n){return(t[n]|t[n+1]<<8|t[n+2]<<16|t[n+3]<<24)>>>0},lt=function(t,n){return ft(t,n)+4294967296*ft(t,n+4)},ct=function(t,n,r){for(;r;++n)t[n]=r,r>>>=8},pt=function(t,n){var r=n.filename;if(t[0]=31,t[1]=139,t[2]=8,t[8]=n.level<2?4:9==n.level?2:0,t[9]=3,0!=n.mtime&&ct(t,4,Math.floor(new Date(n.mtime||Date.now())/1e3)),r){t[3]=8;for(var e=0;e<=r.length;++e)t[e+10]=r.charCodeAt(e)}},vt=function(t){31==t[0]&&139==t[1]&&8==t[2]||I(6,"invalid gzip data");var n=t[3],r=10;4&n&&(r+=2+(t[10]|t[11]<<8));for(var e=(n>>3&1)+(n>>4&1);e>0;e-=!t[r++]);return r+(2&n)},dt=function(t){var n=t.length;return(t[n-4]|t[n-3]<<8|t[n-2]<<16|t[n-1]<<24)>>>0},gt=function(t){return 10+(t.filename?t.filename.length+1:0)},yt=function(t,n){var r=n.level,e=0==r?0:r<6?1:9==r?3:2;if(t[0]=120,t[1]=e<<6|(n.dictionary&&32),t[1]|=31-(t[0]<<8|t[1])%31,n.dictionary){var i=J();i.p(n.dictionary),ct(t,2,i.d())}},mt=function(t,n){return(8!=(15&t[0])||t[0]>>4>7||(t[0]<<8|t[1])%31)&&I(6,"invalid zlib data"),(t[1]>>5&1)==+!n&&I(6,"invalid zlib data: "+(32&t[1]?"need":"unexpected")+" dictionary"),2+(t[1]>>3&4)};function bt(t,n){return"function"==typeof t&&(n=t,t={}),this.ondata=n,t}var wt=function(){function t(t,r){if("function"==typeof t&&(r=t,t={}),this.ondata=r,this.o=t||{},this.s={l:0,i:32768,w:32768,z:32768},this.b=new n(98304),this.o.dictionary){var e=this.o.dictionary.subarray(-32768);this.b.set(e,32768-e.length),this.s.i=32768-e.length}}return t.prototype.p=function(t,n){this.ondata(K(t,this.o,0,0,this.s),n)},t.prototype.push=function(t,r){this.ondata||I(5),this.s.l&&I(4);var e=t.length+this.s.z;if(e>this.b.length){if(e>2*this.b.length-32768){var i=new n(-32768&e);i.set(this.b.subarray(0,this.s.z)),this.b=i}var o=this.b.length-this.s.z;this.b.set(t.subarray(0,o),this.s.z),this.s.z=this.b.length,this.p(this.b,!1),this.b.set(this.b.subarray(-32768)),this.b.set(t.subarray(o),32768),this.s.z=t.length-o+32768,this.s.i=32766,this.s.w=32768}else this.b.set(t,this.s.z),this.s.z+=t.length;this.s.l=1&r,(this.s.z>this.s.w+8191||r)&&(this.p(this.b,r||!1),this.s.w=this.s.i,this.s.i-=2)},t.prototype.flush=function(){this.ondata||I(5),this.s.l&&I(4),this.p(this.b,!1),this.s.w=this.s.i,this.s.i-=2},t}();_e.Deflate=wt;var xt=function(){return function(t,n){ut([_,function(){return[at,wt]}],this,bt.call(this,t,n),(function(t){var n=new wt(t.data);onmessage=at(n)}),6,1)}}();function zt(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[_],(function(t){return it(kt(t.data[0],t.data[1]))}),0,r)}function kt(t,n){return K(t,n||{},0,0)}_e.AsyncDeflate=xt,_e.deflate=zt,_e.deflateSync=kt;var Mt=function(){function t(t,r){"function"==typeof t&&(r=t,t={}),this.ondata=r;var e=t&&t.dictionary&&t.dictionary.subarray(-32768);this.s={i:0,b:e?e.length:0},this.o=new n(32768),this.p=new n(0),e&&this.o.set(e)}return t.prototype.e=function(t){if(this.ondata||I(5),this.d&&I(4),this.p.length){if(t.length){var r=new n(this.p.length+t.length);r.set(this.p),r.set(t,this.p.length),this.p=r}}else this.p=t},t.prototype.c=function(t){this.s.i=+(this.d=t||!1);var n=this.s.b,r=U(this.p,this.s,this.o);this.ondata(D(r,n,this.s.b),this.d),this.o=D(r,this.s.b-32768),this.s.b=this.o.length,this.p=D(this.p,this.s.p/8|0),this.s.p&=7},t.prototype.push=function(t,n){this.e(t),this.c(n)},t}();_e.Inflate=Mt;var St=function(){return function(t,n){ut([$,function(){return[at,Mt]}],this,bt.call(this,t,n),(function(t){var n=new Mt(t.data);onmessage=at(n)}),7,0)}}();function At(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[$],(function(t){return it(Tt(t.data[0],ot(t.data[1])))}),1,r)}function Tt(t,n){return U(t,{i:2},n&&n.out,n&&n.dictionary)}_e.AsyncInflate=St,_e.inflate=At,_e.inflateSync=Tt;var Dt=function(){function t(t,n){this.c=Y(),this.l=0,this.v=1,wt.call(this,t,n)}return t.prototype.push=function(t,n){this.c.p(t),this.l+=t.length,wt.prototype.push.call(this,t,n)},t.prototype.p=function(t,n){var r=K(t,this.o,this.v&&gt(this.o),n&&8,this.s);this.v&&(pt(r,this.o),this.v=0),n&&(ct(r,r.length-8,this.c.d()),ct(r,r.length-4,this.l)),this.ondata(r,n)},t.prototype.flush=function(){wt.prototype.flush.call(this)},t}();_e.Gzip=Dt,_e.Compress=Dt;var Ct=function(){return function(t,n){ut([_,tt,function(){return[at,wt,Dt]}],this,bt.call(this,t,n),(function(t){var n=new Dt(t.data);onmessage=at(n)}),8,1)}}();function It(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[_,tt,function(){return[Ut]}],(function(t){return it(Ut(t.data[0],t.data[1]))}),2,r)}function Ut(t,n){n||(n={});var r=Y(),e=t.length;r.p(t);var i=K(t,n,gt(n),8),o=i.length;return pt(i,n),ct(i,o-8,r.d()),ct(i,o-4,e),i}_e.AsyncGzip=Ct,_e.AsyncCompress=Ct,_e.gzip=It,_e.compress=It,_e.gzipSync=Ut,_e.compressSync=Ut;var Ft=function(){function t(t,n){this.v=1,this.r=0,Mt.call(this,t,n)}return t.prototype.push=function(t,r){if(Mt.prototype.e.call(this,t),this.r+=t.length,this.v){var e=this.p.subarray(this.v-1),i=e.length>3?vt(e):4;if(i>e.length){if(!r)return}else this.v>1&&this.onmember&&this.onmember(this.r-e.length);this.p=e.subarray(i),this.v=0}Mt.prototype.c.call(this,r),!this.s.f||this.s.l||r||(this.v=T(this.s.p)+9,this.s={i:0},this.o=new n(0),this.push(new n(0),r))},t}();_e.Gunzip=Ft;var Et=function(){return function(t,n){var r=this;ut([$,nt,function(){return[at,Mt,Ft]}],this,bt.call(this,t,n),(function(t){var n=new Ft(t.data);n.onmember=function(t){return postMessage(t)},onmessage=at(n)}),9,0,(function(t){return r.onmember&&r.onmember(t)}))}}();function Zt(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[$,nt,function(){return[qt]}],(function(t){return it(qt(t.data[0],t.data[1]))}),3,r)}function qt(t,r){var e=vt(t);return e+8>t.length&&I(6,"invalid gzip data"),U(t.subarray(e,-8),{i:2},r&&r.out||new n(dt(t)),r&&r.dictionary)}_e.AsyncGunzip=Et,_e.gunzip=Zt,_e.gunzipSync=qt;var Ot=function(){function t(t,n){this.c=J(),this.v=1,wt.call(this,t,n)}return t.prototype.push=function(t,n){this.c.p(t),wt.prototype.push.call(this,t,n)},t.prototype.p=function(t,n){var r=K(t,this.o,this.v&&(this.o.dictionary?6:2),n&&4,this.s);this.v&&(yt(r,this.o),this.v=0),n&&ct(r,r.length-4,this.c.d()),this.ondata(r,n)},t.prototype.flush=function(){wt.prototype.flush.call(this)},t}();_e.Zlib=Ot;var Gt=function(){return function(t,n){ut([_,rt,function(){return[at,wt,Ot]}],this,bt.call(this,t,n),(function(t){var n=new Ot(t.data);onmessage=at(n)}),10,1)}}();function Lt(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[_,rt,function(){return[Ht]}],(function(t){return it(Ht(t.data[0],t.data[1]))}),4,r)}function Ht(t,n){n||(n={});var r=J();r.p(t);var e=K(t,n,n.dictionary?6:2,4);return yt(e,n),ct(e,e.length-4,r.d()),e}_e.AsyncZlib=Gt,_e.zlib=Lt,_e.zlibSync=Ht;var jt=function(){function t(t,n){Mt.call(this,t,n),this.v=t&&t.dictionary?2:1}return t.prototype.push=function(t,n){if(Mt.prototype.e.call(this,t),this.v){if(this.p.length<6&&!n)return;this.p=this.p.subarray(mt(this.p,this.v-1)),this.v=0}n&&(this.p.length<4&&I(6,"invalid zlib data"),this.p=this.p.subarray(0,-4)),Mt.prototype.c.call(this,n)},t}();_e.Unzlib=jt;var Nt=function(){return function(t,n){ut([$,et,function(){return[at,Mt,jt]}],this,bt.call(this,t,n),(function(t){var n=new jt(t.data);onmessage=at(n)}),11,0)}}();function Pt(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),st(t,n,[$,et,function(){return[Bt]}],(function(t){return it(Bt(t.data[0],ot(t.data[1])))}),5,r)}function Bt(t,n){return U(t.subarray(mt(t,n&&n.dictionary),-4),{i:2},n&&n.out,n&&n.dictionary)}_e.AsyncUnzlib=Nt,_e.unzlib=Pt,_e.unzlibSync=Bt;var Yt=function(){function t(t,n){this.o=bt.call(this,t,n)||{},this.G=Ft,this.I=Mt,this.Z=jt}return t.prototype.i=function(){var t=this;this.s.ondata=function(n,r){t.ondata(n,r)}},t.prototype.push=function(t,r){if(this.ondata||I(5),this.s)this.s.push(t,r);else{if(this.p&&this.p.length){var e=new n(this.p.length+t.length);e.set(this.p),e.set(t,this.p.length)}else this.p=t;this.p.length>2&&(this.s=31==this.p[0]&&139==this.p[1]&&8==this.p[2]?new this.G(this.o):8!=(15&this.p[0])||this.p[0]>>4>7||(this.p[0]<<8|this.p[1])%31?new this.I(this.o):new this.Z(this.o),this.i(),this.s.push(this.p,r),this.p=null)}},t}();_e.Decompress=Yt;var Jt=function(){function t(t,n){Yt.call(this,t,n),this.queuedSize=0,this.G=Et,this.I=St,this.Z=Nt}return t.prototype.i=function(){var t=this;this.s.ondata=function(n,r,e){t.ondata(n,r,e)},this.s.ondrain=function(n){t.queuedSize-=n,t.ondrain&&t.ondrain(n)}},t.prototype.push=function(t,n){this.queuedSize+=t.length,Yt.prototype.push.call(this,t,n)},t}();function Kt(t,n,r){return r||(r=n,n={}),"function"!=typeof r&&I(7),31==t[0]&&139==t[1]&&8==t[2]?Zt(t,n,r):8!=(15&t[0])||t[0]>>4>7||(t[0]<<8|t[1])%31?At(t,n,r):Pt(t,n,r)}function Qt(t,n){return 31==t[0]&&139==t[1]&&8==t[2]?qt(t,n):8!=(15&t[0])||t[0]>>4>7||(t[0]<<8|t[1])%31?Tt(t,n):Bt(t,n)}_e.AsyncDecompress=Jt,_e.decompress=Kt,_e.decompressSync=Qt;var Rt=function(t,r,e,i){for(var o in t){var s=t[o],a=r+o,u=i;Array.isArray(s)&&(u=Q(i,s[1]),s=s[0]),s instanceof n?e[a]=[s,u]:(e[a+="/"]=[new n(0),u],Rt(s,a,e,i))}},Vt="undefined"!=typeof TextEncoder&&new TextEncoder,Wt="undefined"!=typeof TextDecoder&&new TextDecoder,Xt=0;try{Wt.decode(N,{stream:!0}),Xt=1}catch(t){}var $t=function(t){for(var n="",r=0;;){var e=t[r++],i=(e>127)+(e>223)+(e>239);if(r+i>t.length)return{s:n,r:D(t,r-1)};i?3==i?(e=((15&e)<<18|(63&t[r++])<<12|(63&t[r++])<<6|63&t[r++])-65536,n+=String.fromCharCode(55296|e>>10,56320|1023&e)):n+=String.fromCharCode(1&i?(31&e)<<6|63&t[r++]:(15&e)<<12|(63&t[r++])<<6|63&t[r++]):n+=String.fromCharCode(e)}},_t=function(){function t(t){this.ondata=t,Xt?this.t=new TextDecoder:this.p=N}return t.prototype.push=function(t,r){if(this.ondata||I(5),r=!!r,this.t)return this.ondata(this.t.decode(t,{stream:!0}),r),void(r&&(this.t.decode().length&&I(8),this.t=null));this.p||I(4);var e=new n(this.p.length+t.length);e.set(this.p),e.set(t,this.p.length);var i=$t(e),o=i.s,s=i.r;r?(s.length&&I(8),this.p=null):this.p=s,this.ondata(o,r)},t}();_e.DecodeUTF8=_t;var tn=function(){function t(t){this.ondata=t}return t.prototype.push=function(t,n){this.ondata||I(5),this.d&&I(4),this.ondata(nn(t),this.d=n||!1)},t}();function nn(t,r){if(r){for(var e=new n(t.length),i=0;i<t.length;++i)e[i]=t.charCodeAt(i);return e}if(Vt)return Vt.encode(t);var o=t.length,s=new n(t.length+(t.length>>1)),a=0,u=function(t){s[a++]=t};for(i=0;i<o;++i){if(a+5>s.length){var h=new n(a+8+(o-i<<1));h.set(s),s=h}var f=t.charCodeAt(i);f<128||r?u(f):f<2048?(u(192|f>>6),u(128|63&f)):f>55295&&f<57344?(u(240|(f=65536+(1047552&f)|1023&t.charCodeAt(++i))>>18),u(128|f>>12&63),u(128|f>>6&63),u(128|63&f)):(u(224|f>>12),u(128|f>>6&63),u(128|63&f))}return D(s,0,a)}function rn(t,n){if(n){for(var r="",e=0;e<t.length;e+=16384)r+=String.fromCharCode.apply(null,t.subarray(e,e+16384));return r}if(Wt)return Wt.decode(t);var i=$t(t),o=i.s;return(r=i.r).length&&I(8),o}_e.EncodeUTF8=tn,_e.strToU8=nn,_e.strFromU8=rn;var en=function(t){return 1==t?3:t<6?2:9==t?1:0},on=function(t,n){return n+30+ht(t,n+26)+ht(t,n+28)},sn=function(t,n,r){var e=ht(t,n+28),i=rn(t.subarray(n+46,n+46+e),!(2048&ht(t,n+8))),o=n+46+e,s=ft(t,n+20),a=r&&4294967295==s?an(t,o):[s,ft(t,n+24),ft(t,n+42)],u=a[0],h=a[1],f=a[2];return[ht(t,n+10),u,h,i,o+ht(t,n+30)+ht(t,n+32),f]},an=function(t,n){for(;1!=ht(t,n);n+=4+ht(t,n+2));return[lt(t,n+12),lt(t,n+4),lt(t,n+20)]},un=function(t){var n=0;if(t)for(var r in t){var e=t[r].length;e>65535&&I(9),n+=e+4}return n},hn=function(t,n,r,e,i,o,s,a){var u=e.length,h=r.extra,f=a&&a.length,l=un(h);ct(t,n,null!=s?33639248:67324752),n+=4,null!=s&&(t[n++]=20,t[n++]=r.os),t[n]=20,n+=2,t[n++]=r.flag<<1|(o<0&&8),t[n++]=i&&8,t[n++]=255&r.compression,t[n++]=r.compression>>8;var c=new Date(null==r.mtime?Date.now():r.mtime),p=c.getFullYear()-1980;if((p<0||p>119)&&I(10),ct(t,n,p<<25|c.getMonth()+1<<21|c.getDate()<<16|c.getHours()<<11|c.getMinutes()<<5|c.getSeconds()>>1),n+=4,-1!=o&&(ct(t,n,r.crc),ct(t,n+4,o<0?-o-2:o),ct(t,n+8,r.size)),ct(t,n+12,u),ct(t,n+14,l),n+=16,null!=s&&(ct(t,n,f),ct(t,n+6,r.attrs),ct(t,n+10,s),n+=14),t.set(e,n),n+=u,l)for(var v in h){var d=h[v],g=d.length;ct(t,n,+v),ct(t,n+2,g),t.set(d,n+4),n+=4+g}return f&&(t.set(a,n),n+=f),n},fn=function(t,n,r,e,i){ct(t,n,101010256),ct(t,n+8,r),ct(t,n+10,r),ct(t,n+12,e),ct(t,n+16,i)},ln=function(){function t(t){this.filename=t,this.c=Y(),this.size=0,this.compression=0}return t.prototype.process=function(t,n){this.ondata(null,t,n)},t.prototype.push=function(t,n){this.ondata||I(5),this.c.p(t),this.size+=t.length,n&&(this.crc=this.c.d()),this.process(t,n||!1)},t}();_e.ZipPassThrough=ln;var cn=function(){function t(t,n){var r=this;n||(n={}),ln.call(this,t),this.d=new wt(n,(function(t,n){r.ondata(null,t,n)})),this.compression=8,this.flag=en(n.level)}return t.prototype.process=function(t,n){try{this.d.push(t,n)}catch(t){this.ondata(t,null,n)}},t.prototype.push=function(t,n){ln.prototype.push.call(this,t,n)},t}();_e.ZipDeflate=cn;var pn=function(){function t(t,n){var r=this;n||(n={}),ln.call(this,t),this.d=new xt(n,(function(t,n,e){r.ondata(t,n,e)})),this.compression=8,this.flag=en(n.level),this.terminate=this.d.terminate}return t.prototype.process=function(t,n){this.d.push(t,n)},t.prototype.push=function(t,n){ln.prototype.push.call(this,t,n)},t}();_e.AsyncZipDeflate=pn;var vn=function(){function t(t){this.ondata=t,this.u=[],this.d=1}return t.prototype.add=function(t){var r=this;if(this.ondata||I(5),2&this.d)this.ondata(I(4+8*(1&this.d),0,1),null,!1);else{var e=nn(t.filename),i=e.length,o=t.comment,s=o&&nn(o),a=i!=t.filename.length||s&&o.length!=s.length,u=i+un(t.extra)+30;i>65535&&this.ondata(I(11,0,1),null,!1);var h=new n(u);hn(h,0,t,e,a,-1);var f=[h],l=function(){for(var t=0,n=f;t<n.length;t++)r.ondata(null,n[t],!1);f=[]},c=this.d;this.d=0;var p=this.u.length,v=Q(t,{f:e,u:a,o:s,t:function(){t.terminate&&t.terminate()},r:function(){if(l(),c){var t=r.u[p+1];t?t.r():r.d=1}c=1}}),d=0;t.ondata=function(e,i,o){if(e)r.ondata(e,i,o),r.terminate();else if(d+=i.length,f.push(i),o){var s=new n(16);ct(s,0,134695760),ct(s,4,t.crc),ct(s,8,d),ct(s,12,t.size),f.push(s),v.c=d,v.b=u+d+16,v.crc=t.crc,v.size=t.size,c&&v.r(),c=1}else c&&l()},this.u.push(v)}},t.prototype.end=function(){var t=this;2&this.d?this.ondata(I(4+8*(1&this.d),0,1),null,!0):(this.d?this.e():this.u.push({r:function(){1&t.d&&(t.u.splice(-1,1),t.e())},t:function(){}}),this.d=3)},t.prototype.e=function(){for(var t=0,r=0,e=0,i=0,o=this.u;i<o.length;i++)e+=46+(h=o[i]).f.length+un(h.extra)+(h.o?h.o.length:0);for(var s=new n(e+22),a=0,u=this.u;a<u.length;a++){var h;hn(s,t,h=u[a],h.f,h.u,-h.c-2,r,h.o),t+=46+h.f.length+un(h.extra)+(h.o?h.o.length:0),r+=h.b}fn(s,t,this.u.length,e,r),this.ondata(null,s,!0),this.d=2},t.prototype.terminate=function(){for(var t=0,n=this.u;t<n.length;t++)n[t].t();this.d=2},t}();function dn(t,r,e){e||(e=r,r={}),"function"!=typeof e&&I(7);var i={};Rt(t,"",i,r);var o=Object.keys(i),s=o.length,a=0,u=0,h=s,f=Array(s),l=[],c=function(){for(var t=0;t<l.length;++t)l[t]()},p=function(t,n){xn((function(){e(t,n)}))};xn((function(){p=e}));var v=function(){var t=new n(u+22),r=a,e=u-a;u=0;for(var i=0;i<h;++i){var o=f[i];try{var s=o.c.length;hn(t,u,o,o.f,o.u,s);var l=30+o.f.length+un(o.extra),c=u+l;t.set(o.c,c),hn(t,a,o,o.f,o.u,s,u,o.m),a+=16+l+(o.m?o.m.length:0),u=c+s}catch(t){return p(t,null)}}fn(t,a,f.length,e,r),p(null,t)};s||v();for(var d=function(t){var n=o[t],r=i[n],e=r[0],h=r[1],d=Y(),g=e.length;d.p(e);var y=nn(n),m=y.length,b=h.comment,w=b&&nn(b),x=w&&w.length,z=un(h.extra),k=0==h.level?0:8,M=function(r,e){if(r)c(),p(r,null);else{var i=e.length;f[t]=Q(h,{size:g,crc:d.d(),c:e,f:y,m:w,u:m!=n.length||w&&b.length!=x,compression:k}),a+=30+m+z+i,u+=76+2*(m+z)+(x||0)+i,--s||v()}};if(m>65535&&M(I(11,0,1),null),k)if(g<16e4)try{M(null,kt(e,h))}catch(t){M(t,null)}else l.push(zt(e,h,M));else M(null,e)},g=0;g<h;++g)d(g);return c}function gn(t,r){r||(r={});var e={},i=[];Rt(t,"",e,r);var o=0,s=0;for(var a in e){var u=e[a],h=u[0],f=u[1],l=0==f.level?0:8,c=(M=nn(a)).length,p=f.comment,v=p&&nn(p),d=v&&v.length,g=un(f.extra);c>65535&&I(11);var y=l?kt(h,f):h,m=y.length,b=Y();b.p(h),i.push(Q(f,{size:h.length,crc:b.d(),c:y,f:M,m:v,u:c!=a.length||v&&p.length!=d,o:o,compression:l})),o+=30+c+g+m,s+=76+2*(c+g)+(d||0)+m}for(var w=new n(s+22),x=o,z=s-o,k=0;k<i.length;++k){var M;hn(w,(M=i[k]).o,M,M.f,M.u,M.c.length);var S=30+M.f.length+un(M.extra);w.set(M.c,M.o+S),hn(w,o,M,M.f,M.u,M.c.length,M.o,M.m),o+=16+S+(M.m?M.m.length:0)}return fn(w,o,i.length,z,x),w}_e.Zip=vn,_e.zip=dn,_e.zipSync=gn;var yn=function(){function t(){}return t.prototype.push=function(t,n){this.ondata(null,t,n)},t.compression=0,t}();_e.UnzipPassThrough=yn;var mn=function(){function t(){var t=this;this.i=new Mt((function(n,r){t.ondata(null,n,r)}))}return t.prototype.push=function(t,n){try{this.i.push(t,n)}catch(t){this.ondata(t,null,n)}},t.compression=8,t}();_e.UnzipInflate=mn;var bn=function(){function t(t,n){var r=this;n<32e4?this.i=new Mt((function(t,n){r.ondata(null,t,n)})):(this.i=new St((function(t,n,e){r.ondata(t,n,e)})),this.terminate=this.i.terminate)}return t.prototype.push=function(t,n){this.i.terminate&&(t=D(t,0)),this.i.push(t,n)},t.compression=8,t}();_e.AsyncUnzipInflate=bn;var wn=function(){function t(t){this.onfile=t,this.k=[],this.o={0:yn},this.p=N}return t.prototype.push=function(t,r){var e=this;if(this.onfile||I(5),this.p||I(4),this.c>0){var i=Math.min(this.c,t.length),o=t.subarray(0,i);if(this.c-=i,this.d?this.d.push(o,!this.c):this.k[0].push(o),(t=t.subarray(i)).length)return this.push(t,r)}else{var s=0,a=0,u=void 0,h=void 0;this.p.length?t.length?((h=new n(this.p.length+t.length)).set(this.p),h.set(t,this.p.length)):h=this.p:h=t;for(var f=h.length,l=this.c,c=l&&this.d,p=function(){var t,n=ft(h,a);if(67324752==n){s=1,u=a,v.d=null,v.c=0;var r=ht(h,a+6),i=ht(h,a+8),o=2048&r,c=8&r,p=ht(h,a+26),d=ht(h,a+28);if(f>a+30+p+d){var g=[];v.k.unshift(g),s=2;var y,m=ft(h,a+18),b=ft(h,a+22),w=rn(h.subarray(a+30,a+=30+p),!o);4294967295==m?(t=c?[-2]:an(h,a),m=t[0],b=t[1]):c&&(m=-1),a+=d,v.c=m;var x={name:w,compression:i,start:function(){if(x.ondata||I(5),m){var t=e.o[i];t||x.ondata(I(14,"unknown compression type "+i,1),null,!1),(y=m<0?new t(w):new t(w,m,b)).ondata=function(t,n,r){x.ondata(t,n,r)};for(var n=0,r=g;n<r.length;n++)y.push(r[n],!1);e.k[0]==g&&e.c?e.d=y:y.push(N,!0)}else x.ondata(null,N,!0)},terminate:function(){y&&y.terminate&&y.terminate()}};m>=0&&(x.size=m,x.originalSize=b),v.onfile(x)}return"break"}if(l){if(134695760==n)return u=a+=12+(-2==l&&8),s=3,v.c=0,"break";if(33639248==n)return u=a-=4,s=3,v.c=0,"break"}},v=this;a<f-4&&"break"!==p();++a);if(this.p=N,l<0){var d=h.subarray(0,s?u-12-(-2==l&&8)-(134695760==ft(h,u-16)&&4):a);c?c.push(d,!!s):this.k[+(2==s)].push(d)}if(2&s)return this.push(h.subarray(a),r);this.p=h.subarray(a)}r&&(this.c&&I(13),this.p=null)},t.prototype.register=function(t){this.o[t.compression]=t},t}();_e.Unzip=wn;var xn="function"==typeof queueMicrotask?queueMicrotask:"function"==typeof setTimeout?setTimeout:function(t){t()};function zn(t,r,e){e||(e=r,r={}),"function"!=typeof e&&I(7);var i=[],o=function(){for(var t=0;t<i.length;++t)i[t]()},s={},a=function(t,n){xn((function(){e(t,n)}))};xn((function(){a=e}));for(var u=t.length-22;101010256!=ft(t,u);--u)if(!u||t.length-u>65558)return a(I(13,0,1),null),o;var h=ht(t,u+8);if(h){var f=h,l=ft(t,u+16),c=4294967295==l||65535==f;if(c){var p=ft(t,u-12);(c=101075792==ft(t,p))&&(f=h=ft(t,p+32),l=ft(t,p+48))}for(var v=r&&r.filter,d=function(r){var e=sn(t,l,c),u=e[0],f=e[1],p=e[2],d=e[3],g=e[4],y=on(t,e[5]);l=g;var m=function(t,n){t?(o(),a(t,null)):(n&&(s[d]=n),--h||a(null,s))};if(!v||v({name:d,size:f,originalSize:p,compression:u}))if(u)if(8==u){var b=t.subarray(y,y+f);if(p<524288||f>.8*p)try{m(null,Tt(b,{out:new n(p)}))}catch(t){m(t,null)}else i.push(At(b,{size:p},m))}else m(I(14,"unknown compression type "+u,1),null);else m(null,D(t,y,y+f));else m(null,null)},g=0;g<f;++g)d()}else a(null,{});return o}function kn(t,r){for(var e={},i=t.length-22;101010256!=ft(t,i);--i)(!i||t.length-i>65558)&&I(13);var o=ht(t,i+8);if(!o)return{};var s=ft(t,i+16),a=4294967295==s||65535==o;if(a){var u=ft(t,i-12);(a=101075792==ft(t,u))&&(o=ft(t,u+32),s=ft(t,u+48))}for(var h=r&&r.filter,f=0;f<o;++f){var l=sn(t,s,a),c=l[0],p=l[1],v=l[2],d=l[3],g=l[4],y=on(t,l[5]);s=g,h&&!h({name:d,size:p,originalSize:v,compression:c})||(c?8==c?e[d]=Tt(t.subarray(y,y+p),{out:new n(v)}):I(14,"unknown compression type "+c):e[d]=D(t,y,y+p))}return e}_e.unzip=zn,_e.unzipSync=kn;return _e});
 </script>
 <script>
-/* PaperArk application v0.1. No network or persistent browser storage.
+/* PaperArk application v0.2. No network or persistent browser storage.
  * SPDX-License-Identifier: MIT
  * Copyright (c) 2026 Heiner (Heini155)
  * Sections: normative wire specification; bytes/crypto; container; QR;
@@ -12856,112 +12918,159 @@ async function restoreArchive(collection,password){
  requireThat(bytes.length===m.original,'Original length mismatch.');requireThat(equal(await sha(bytes),m.digest),'Original SHA-256 mismatch.');const result=bytes;bytes=null;return result;
  }finally{bytes?.fill(0);}
 }
-// Base32 is a redundant transport representation, not a new archive format.
-// RFC 4648 section 6: encode the concatenation of the EXACT complete QR blocks,
-// in block-index order, once. Padding occurs only at the end of this one stream.
-// No new wrapper, delimiters, checksum, or changes to any PaperArk wire field.
-const BASE32_ALPHABET = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-const BASE32_COLUMNS = 64, BASE32_LINES_PER_PAGE = 32;
-const BASE32_RECOVERY = `BASE32 RECOVERY
-This text is an alternative representation of the same binary PaperArk
-archive data stored in the QR codes.
-Encoding: RFC 4648 Base32
-Alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567
-Padding character: =
-To recover:
-1. Read all Base32 characters from top to bottom, in numbered page order.
-2. Ignore spaces, line breaks and page breaks. Exclude headings/instructions.
-3. Concatenate the characters into one continuous Base32 string.
-4. Decode according to RFC 4648 Base32.
-5. The resulting bytes are the PaperArk binary archive data.
-6. Process those bytes according to the PaperArk format specification.
-The decoded bytes are complete QR blocks concatenated by block index.
-Starting at byte 0, each block has length 144 + N + P, where N and P are
-unsigned big-endian 2-byte integers at offsets 108 and 110 in that block.
-Read that many bytes, then repeat at the next block until the stream ends.
-Use the unchanged PaperArk v1 specification printed on the QR sheets.
-The Base32 text and QR codes contain equivalent archive data.`;
-function base32Encode(bytes){
- let buffer=0,bits=0,result='';
- for(const byte of bytes){
-  buffer=(buffer<<8)|byte;bits+=8;
-  while(bits>=5){bits-=5;result+=BASE32_ALPHABET[(buffer>>>bits)&31];}
-  buffer&=(1<<bits)-1;
+// ---- Base32 transport v2 -------------------------------------------------
+// A first-class printable text medium, not a recovery copy. The PaperArk v1
+// wire format is unchanged: this encodes the exact concatenated block bytes.
+// Layers: 4-byte big-endian stream length prefix, Reed-Solomon RS(255,215)
+// over GF(256) (primitive polynomial 0x11d, generator 2) protecting each
+// 215-byte chunk with 40 parity bytes, symbol-wise interleaving of the
+// codewords across the page, RFC 4648 Base32 alphabet without padding, and
+// one printed line of 64 data characters plus 8 CRC characters per row.
+// The CRC field carries a 13-bit line number plus a 27-bit CRC32 over the
+// line number and the data field, which detects misalignment, deleted lines
+// and out-of-order sheets. One damaged line costs 40 erasure bytes, well
+// inside one codeword's 40-erasure budget; scattered character errors are
+// corrected as errors (up to 20 bytes per codeword). The decoder tries:
+// (1) line-number-anchored reconstruction with erased lines filled as
+// erasures, then (2) naive trusted chunking for scattered OCR errors.
+const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
+const B32_COLS=64,B32_CRC_COLS=8,B32_LINE=72,B32_LINES_PER_PAGE=44;
+const RS_DATA=215,RS_PARITY=40,RS_N=255;
+const CRC32_TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c;}return t;})();
+function crc32(bytes){let c=0xFFFFFFFF;for(const b of bytes)c=CRC32_TABLE[(c^b)&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0;}
+const GF_EXP=new Uint8Array(512),GF_LOG=new Uint8Array(256);
+(()=>{let x=1;for(let i=0;i<255;i++){GF_EXP[i]=x;GF_LOG[x]=i;x<<=1;if(x&0x100)x^=0x11d;}for(let i=255;i<512;i++)GF_EXP[i]=GF_EXP[i-255];})();
+const gfMul=(a,b)=>(a&&b)?GF_EXP[GF_LOG[a]+GF_LOG[b]]:0;
+function gfDiv(a,b){requireThat(b!==0,'GF division by zero.');return a?GF_EXP[GF_LOG[a]+255-GF_LOG[b]]:0;}
+function gfPow(x,p){const v=(GF_LOG[x]*p)%255;return GF_EXP[v<0?v+255:v];}
+function gfPolyEval(p,x){let y=p[0];for(let i=1;i<p.length;i++)y=gfMul(y,x)^p[i];return y;}
+function gfPolyAdd(p,q){const r=new Uint8Array(Math.max(p.length,q.length));const j=r.length-p.length,k=r.length-q.length;for(let i=0;i<p.length;i++)r[j+i]=p[i];for(let i=0;i<q.length;i++)r[k+i]^=q[i];return r;}
+function gfPolyMul(p,q){const r=new Uint8Array(p.length+q.length-1);for(let i=0;i<p.length;i++)for(let j=0;j<q.length;j++)r[i+j]^=gfMul(p[i],q[j]);return r;}
+function gfPolyScale(p,s){const r=new Uint8Array(p.length);for(let i=0;i<p.length;i++)r[i]=gfMul(p[i],s);return r;}
+function rsGeneratorPoly(nsym){let g=new Uint8Array([1]);for(let i=0;i<nsym;i++)g=gfPolyMul(g,new Uint8Array([1,gfPow(2,i)]));return g;}
+function rsEncode(data,gen){const nsym=gen.length-1;const rem=new Uint8Array(data.length+nsym);rem.set(data,0);for(let i=0;i<data.length;i++){const c=rem[i];if(c!==0)for(let j=0;j<gen.length;j++)rem[i+j]^=gfMul(gen[j],c);}const out=new Uint8Array(data.length+nsym);out.set(data,0);out.set(rem.subarray(data.length),data.length);return out;}
+function rsSyndromes(cw,nsym){const s=new Uint8Array(nsym+1);for(let i=0;i<nsym;i++)s[i+1]=gfPolyEval(cw,gfPow(2,i));return s;}
+function forneySyndromes(synd,erasePos,nmess){const f=Array.from(synd.slice(1));for(const p of erasePos){const x=gfPow(2,nmess-1-p);for(let j=0;j<f.length-1;j++)f[j]=gfMul(f[j],x)^f[j+1];}return f;}
+function findErrorLocator(synd,nsym,eraseCount){let errLoc=new Uint8Array([1]),oldLoc=new Uint8Array([1]);const shift=synd.length-nsym;for(let i=0;i<nsym-eraseCount;i++){const K=i+shift;let delta=synd[K];for(let j=1;j<errLoc.length;j++)delta^=gfMul(errLoc[errLoc.length-1-j],synd[K-j]);oldLoc=concat(oldLoc,new Uint8Array([0]));if(delta!==0){if(oldLoc.length>errLoc.length){const nl=gfPolyScale(oldLoc,delta);oldLoc=gfPolyScale(errLoc,gfDiv(1,delta));errLoc=nl;}errLoc=gfPolyAdd(errLoc,gfPolyScale(oldLoc,delta));}}let s=0;while(s<errLoc.length-1&&errLoc[s]===0)s++;return errLoc.subarray(s);}
+function findErrors(errLoc,nmess){const errs=errLoc.length-1,pos=[];for(let i=0;i<nmess;i++)if(gfPolyEval(errLoc,gfPow(2,i))===0)pos.push(nmess-1-i);requireThat(pos.length===errs,'Reed-Solomon locator inconsistent.');return pos;}
+function correctErrata(cw,synd,errPos){const msg=Uint8Array.from(cw);const coefPos=errPos.map(p=>msg.length-1-p);let errLoc=new Uint8Array([1]);for(const i of coefPos)errLoc=gfPolyMul(errLoc,gfPolyAdd(new Uint8Array([1]),new Uint8Array([gfPow(2,i),0])));const prod=gfPolyMul(Array.from(synd).reverse(),errLoc);const nsym2=errLoc.length-1;const omega=prod.slice(Math.max(0,prod.length-(nsym2+1)));const X=coefPos.map(cp=>gfPow(2,-(255-cp)));const E=new Uint8Array(msg.length);for(let i=0;i<X.length;i++){const Xi=X[i],XiInv=gfDiv(1,Xi);let denom=1;for(let j=0;j<X.length;j++)if(j!==i)denom=gfMul(denom,1^gfMul(XiInv,X[j]));requireThat(denom!==0,'Forney denominator zero.');let y=gfPolyEval(omega,XiInv);y=gfMul(Xi,y);E[errPos[i]]=gfDiv(y,denom);}return gfPolyAdd(msg,E);}
+function rsDecode(cw,erasePos){requireThat(cw.length===RS_N,'Reed-Solomon codeword length invalid.');requireThat(erasePos.length<=RS_PARITY,'Too many erasures.');const out=Uint8Array.from(cw);for(const p of erasePos)out[p]=0;const synd=rsSyndromes(out,RS_PARITY);if(!Array.from(synd).some(s=>s))return out;const fs=forneySyndromes(synd,erasePos,out.length);const loc=findErrorLocator(fs,RS_PARITY,erasePos.length);const errPos=findErrors(Uint8Array.from(loc).reverse(),out.length);requireThat(2*errPos.length+erasePos.length<=RS_PARITY,'Beyond Reed-Solomon correction capability.');const corrected=correctErrata(out,synd,erasePos.concat(errPos));if(Array.from(rsSyndromes(corrected,RS_PARITY)).some(s=>s))throw new Error('Reed-Solomon correction failed.');return corrected;}
+function b32NoPad(bytes){let buffer=0,bits=0,out='';for(const byte of bytes){buffer=(buffer<<8)|byte;bits+=8;while(bits>=5){bits-=5;out+=B32[(buffer>>>bits)&31];}buffer&=(1<<bits)-1;}if(bits)out+=B32[(buffer<<(5-bits))&31];return out;}
+function b32ToBytes(s){const out=[];let buffer=0,bits=0;for(const ch of s){const v=B32.indexOf(ch);if(v<0)return null;buffer=(buffer<<5)|v;bits+=5;if(bits>=8){bits-=8;out.push((buffer>>>bits)&255);}}return out;}
+function crcField(data,lineNum){const c=crc32(concat(new Uint8Array([lineNum>>>8,lineNum&255]),enc.encode(data)))&0x07FFFFFF;return b32NoPad(new Uint8Array([lineNum>>>5,((lineNum&31)<<3)|(c>>>24),(c>>>16)&255,(c>>>8)&255,c&255]));}
+function crcCheck(line){if(line.length!==B32_LINE)return -1;const f=b32ToBytes(line.slice(B32_COLS));if(!f||f.length!==5)return -1;const lineNum=(f[0]<<5)|(f[1]>>>3);const crc=((f[1]&7)<<24)|(f[2]<<16)|(f[3]<<8)|f[4];const c=crc32(concat(new Uint8Array([lineNum>>>8,lineNum&255]),enc.encode(line.slice(0,B32_COLS))))&0x07FFFFFF;return c===crc?lineNum:-1;}
+function transportEncode(blocks){const innerLen=4+blocks.length;const chunks=Math.ceil(innerLen/RS_DATA);const D=Math.ceil(chunks/8)*8;/* D multiple of 8 => D*408 chars is an exact multiple of 64: every printed line is full, no '=' padding exists, so a damaged final line behaves exactly like any other line. */const padded=new Uint8Array(D*RS_DATA);const v=new DataView(padded.buffer);v.setUint32(0,blocks.length);padded.set(blocks,4);requireThat(Math.ceil(D*RS_N*8/5)<=8191*B32_COLS,'Base32 transport exceeds 13-bit line numbering.');const gen=rsGeneratorPoly(RS_PARITY);const inter=new Uint8Array(D*RS_N);for(let c=0;c<D;c++){const cw=rsEncode(padded.subarray(c*RS_DATA,(c+1)*RS_DATA),gen);for(let j=0;j<RS_N;j++)inter[j*D+c]=cw[j];}let text=b32NoPad(inter);requireThat(text.length%B32_COLS===0,'transport line invariant violated');const lines=[];for(let i=0;i<text.length;i+=B32_COLS){const d=text.slice(i,i+B32_COLS);lines.push(d+crcField(d,lines.length));}return{lines,pages:Math.ceil(lines.length/B32_LINES_PER_PAGE),codewords:D};}
+function transportPageInfo(blocksLen){const chunks=Math.ceil((4+blocksLen)/RS_DATA);const D=Math.ceil(chunks/8)*8;const lines=D*RS_N*8/5/B32_COLS;return{pages:Math.ceil(lines/B32_LINES_PER_PAGE),lines,codewords:D};}
+function scanLines(s){const found=new Map();for(let i=0;i+B32_LINE<=s.length;i++){const line=s.slice(i,i+B32_LINE);const num=crcCheck(line);if(num>=0&&!found.has(num))found.set(num,line.slice(0,B32_COLS));}return found;}
+function decodeTransportFields(fields){
+ const chars=[],erased=[];
+ for(const f of fields)for(let i=0;i<f.data.length;i++){chars.push(f.data[i]);erased.push(f.erased);}
+ const byteCount=Math.floor(chars.length*5/8);
+ requireThat(byteCount>=8,'Base32 transport data too short.');
+ let bytes=new Uint8Array(byteCount),erasedByte=new Uint8Array(byteCount);
+ for(let c=0;c<chars.length;c++){
+  const val=B32.indexOf(chars[c]);
+  requireThat(val>=0,'Invalid character in Base32 transport data.');
+  for(let k=0;k<5;k++){const t=5*c+k,b=t>>3;if(b>=byteCount)break;bytes[b]|=((val>>(4-k))&1)<<(7-(t&7));if(erased[c])erasedByte[b]=1;}
  }
- if(bits)result+=BASE32_ALPHABET[(buffer<<(5-bits))&31];
- return result.padEnd(Math.ceil(result.length/8)*8,'=');
-}
-function base32Decode(text){
- // Validate before uppercasing: Unicode case folding must not turn an invalid
- // character (e.g. long s) into a permitted ASCII letter. Positions are 1-based
- // UTF-16 positions in the original input, including whitespace.
- const invalid=text.search(/[^A-Za-z2-7=\s]/);
- requireThat(invalid===-1,`Invalid Base32 recovery data. Unexpected character at position ${invalid+1}.`);
- const normalized=text.replace(/\s/g,'').toUpperCase();
- if(!normalized.length)return new Uint8Array();
- const paddingStart=normalized.indexOf('='),dataLength=paddingStart<0?normalized.length:paddingStart;
- const padding=normalized.length-dataLength,remainder=dataLength%8;
- const requiredPadding={0:0,2:6,4:4,5:3,7:1}[remainder];
- requireThat(normalized.length%8===0 && requiredPadding!==undefined && padding===requiredPadding &&
-  (paddingStart<0 || /^=+$/.test(normalized.slice(paddingStart))),
-  'Invalid Base32 recovery data. Incorrect or missing RFC 4648 padding.');
- const bytes=new Uint8Array(Math.floor(dataLength*5/8));let buffer=0,bits=0,offset=0;
- for(let i=0;i<dataLength;i++){
-  buffer=(buffer<<5)|BASE32_ALPHABET.indexOf(normalized[i]);bits+=5;
-  if(bits>=8){bits-=8;bytes[offset++]=(buffer>>>bits)&255;}
-  buffer&=(1<<bits)-1;
+ const D=Math.ceil(byteCount/RS_N);
+ if(byteCount<D*RS_N){const b2=new Uint8Array(D*RS_N);b2.set(bytes);const e2=new Uint8Array(D*RS_N).fill(1);e2.set(erasedByte,0);bytes=b2;erasedByte=e2;}
+ const inner=new Uint8Array(D*RS_N);
+ for(let c=0;c<D;c++){
+  const cw=new Uint8Array(RS_N),pos=[];
+  for(let j=0;j<RS_N;j++){cw[j]=bytes[j*D+c];if(erasedByte[j*D+c])pos.push(j);}
+  let corrected;
+  try{corrected=rsDecode(cw,pos);}catch(e){throw new Error('Base32 transport: codeword '+(c+1)+' of '+D+' uncorrectable.');}
+  inner.set(corrected.subarray(0,RS_DATA),c*RS_DATA);
  }
- if(buffer!==0){bytes.fill(0);throw new Error('Invalid Base32 recovery data. Non-zero RFC 4648 padding bits.');}
- return bytes;
+ const v=new DataView(inner.buffer);
+ const blocksLen=v.getUint32(0);
+ requireThat(blocksLen>0&&blocksLen<=inner.length-4,'Base32 transport length field invalid.');
+ const blocks=inner.slice(4,4+blocksLen);
+ for(let i=4+blocksLen;i<inner.length;i++)requireThat(inner[i]===0,'Base32 transport padding corrupted: too many errors.');
+ return blocks;
 }
-function archiveBase32(blocks){
- const bytes=concat(...blocks);
- try{return base32Encode(bytes);}finally{bytes.fill(0);}
+function transportDecode(text){
+ requireThat(text.search(/[^A-Za-z2-7\s]/)===-1,'Invalid characters in Base32 transport data.');
+ const s=text.replace(/[\s]/g,'').toUpperCase();
+ requireThat(s.length>=B32_LINE,'Base32 transport data too short.');
+ const found=scanLines(s);
+ requireThat(found.size>0,'No valid Base32 transport lines found (CRC check failed).');
+ const nums=[...found.keys()].sort((a,b)=>a-b);
+ const min=nums[0],max=nums[nums.length-1];
+ const attempts=[];
+ const fields=[];
+ for(let n=min;n<=max;n++)fields.push(found.has(n)?{data:found.get(n),erased:false}:{data:'A'.repeat(B32_COLS),erased:true});
+ attempts.push(fields);
+ if(s.length%B32_LINE===0){const f3=[];for(let i=0;i<s.length;i+=B32_LINE)f3.push({data:s.slice(i,i+B32_COLS),erased:false});attempts.push(f3);}
+ let lastError=null;
+ for(const f of attempts){try{return decodeTransportFields(f);}catch(e){lastError=e;}}
+ throw lastError||new Error('Base32 transport decode failed.');
 }
-function base32PageCount(byteLength){return Math.ceil((Math.ceil(byteLength/5)*8)/(BASE32_COLUMNS*BASE32_LINES_PER_PAGE));}
-function base32Pages(text){
- const pages=[],size=BASE32_COLUMNS*BASE32_LINES_PER_PAGE;
- for(let start=0;start<text.length;start+=size){
-  const page=text.slice(start,start+size),lines=[];
-  for(let i=0;i<page.length;i+=BASE32_COLUMNS)lines.push(page.slice(i,i+BASE32_COLUMNS));
-  pages.push(lines.join('\n'));
- }
- return pages;
-}
-function renderBase32Copy(a){
- const fragment=document.createDocumentFragment(),pages=base32Pages(archiveBase32(a.blocks));
- pages.forEach((text,index)=>{
+const B32_TRANSPORT_RECOVERY=`BASE32 TRANSPORT v2 - RECOVERY (no original software required)
+Each line: 64 data characters, one space, 8 CRC characters.
+Alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567 (RFC 4648, no padding).
+The CRC field carries a 13-bit line number + 27-bit CRC32 over the line
+number and data. Protection: RS(255,215) over GF(256), primitive
+polynomial 0x11d, generator 2; codeword symbols interleaved across lines.
+A fully damaged line costs 40 erasure bytes - inside one codeword's
+40-erasure budget. Scattered character errors: up to 20 bytes/codeword.
+To recover: read every readable character from all sheets, ignore the
+printed column space, paste all lines into the restore field (order and
+line breaks optional; line numbers restore the sequence). CRC failures
+become erasures and are corrected by Reed-Solomon; deleted lines are
+detected by their missing line numbers. Do not repair characters by
+hand - paste what you see. The decoded stream is: 4-byte big-endian
+length L, then L bytes of concatenated PaperArk v1 blocks, then zero
+padding. Parse blocks per the PaperArk v1 spec on QR sheets: each block
+is 144+N+P bytes with N,P as unsigned big-endian 16-bit integers at
+block offsets 108 and 110. Keep every sheet.`;
+function renderBase32Sheets(a){
+ const bytes=concat(...a.blocks);
+ let t;
+ try{
+  t=transportEncode(bytes);
+  requireThat(equal(transportDecode(t.lines.join('\n')),bytes),'Base32 transport self-verification failed.');
+ }finally{bytes.fill(0);}
+ const pages=[];
+ for(let i=0;i<t.lines.length;i+=B32_LINES_PER_PAGE)pages.push(t.lines.slice(i,i+B32_LINES_PER_PAGE));
+ const fragment=document.createDocumentFragment();
+ pages.forEach((lines,index)=>{
   const sheet=element('article',undefined,'sheet base32-sheet');
-  sheet.append(element('h2','BASE32 RECOVERY COPY'),
-   element('div',`PaperArk Base32 Recovery Copy · Archive ID: ${a.id} · Page ${index+1} of ${pages.length}`,'base32-label'),
-   element('div','Encoding: RFC 4648 Base32 · Characters per line: 64 (last line may be shorter)','base32-label'),
-   element('pre',BASE32_RECOVERY,'base32-instructions'),element('pre',text,'base32-data'));
+  sheet.append(element('h2','PAPERARK DIGITAL ARCHIVE — BASE32 TRANSPORT'),
+   element('div',`Format v1 · Created ${a.date} · Sheet ${index+1} of ${pages.length} (Base32) · Archive ID: ${a.id}`,'stamp'),
+   element('div',`Filename: ${a.name}`,'metadata filename'),
+   element('div',`Original: ${a.originalSize} bytes · Stored: ${a.storedSize} bytes · Compression: ${a.compression?'gzip / DEFLATE':'none'} · Encryption: ${a.encryption?'AES-256-GCM; password required':'none'}`,'metadata'),
+   element('div',`SHA-256: ${hex(a.digest)}`,'hash'),
+   element('pre',B32_TRANSPORT_RECOVERY,'base32-instructions'),
+   element('pre',lines.map(l=>l.slice(0,B32_COLS)+' '+l.slice(B32_COLS)).join('\n'),'base32-data'),
+   element('div',`Lines ${index*B32_LINES_PER_PAGE+1}–${Math.min((index+1)*B32_LINES_PER_PAGE,t.lines.length)} of ${t.lines.length} · 64 data + 8 CRC characters per line · RS(255,215) corrects 40 erasures per codeword · Keep every sheet`,'block-caption'));
   fragment.append(sheet);
  });
  return fragment;
 }
 async function importBase32(text,target){
- // Frame existing blocks using existing length fields; Collector.add remains
- // the sole block parser/validator used for both QR and Base32 imports.
- const bytes=base32Decode(text),staged=new Collector();let committed=false,accepted=0,duplicates=0;
+ // The transport restores the exact concatenated block bytes; Collector.add
+ // remains the sole block parser/validator used for every import path.
+ const blocks=transportDecode(text);
+ const staged=new Collector();let committed=false,accepted=0,duplicates=0;
  try{
-  requireThat(bytes.length>0,'Invalid Base32 recovery data. No PaperArk blocks found.');
-  requireThat(bytes.length<=MAX_INPUT+65536+MAX_BLOCKS*(FIXED+240),'Base32 recovery data exceeds the existing archive size limits.');
-  // Stage to avoid changing collected QR blocks if a later Base32 block fails.
-  for(const block of target.blocks.values())await staged.add(block.raw);
-  for(let offset=0;offset<bytes.length;){
-   requireThat(bytes.length-offset>=FIXED,'Invalid Base32 recovery data. Truncated PaperArk block header.');
-   const view=new DataView(bytes.buffer,bytes.byteOffset+offset,bytes.length-offset);
+  requireThat(blocks.length>0,'No PaperArk blocks in Base32 transport data.');
+  requireThat(blocks.length<=MAX_INPUT+65536+MAX_BLOCKS*(FIXED+240),'Base32 transport data exceeds the existing archive size limits.');
+  for(const b of target.blocks.values())await staged.add(b.raw);
+  let offset=0;
+  while(offset<blocks.length){
+   requireThat(blocks.length-offset>=FIXED,'Truncated PaperArk block header in Base32 transport data.');
+   const view=new DataView(blocks.buffer,blocks.byteOffset+offset,blocks.length-offset);
    const length=FIXED+view.getUint16(108)+view.getUint16(110);
-   requireThat(length<=bytes.length-offset,'Invalid Base32 recovery data. Truncated PaperArk block.');
-   if(await staged.add(bytes.subarray(offset,offset+length)))accepted++;else duplicates++;
+   requireThat(length<=blocks.length-offset,'Truncated PaperArk block in Base32 transport data.');
+   if(await staged.add(blocks.subarray(offset,offset+length)))accepted++;else duplicates++;
    offset+=length;
   }
   target.clear();target.blocks=staged.blocks;target.meta=staged.meta;committed=true;
   return {accepted,duplicates};
- }finally{bytes.fill(0);if(!committed)staged.clear();}
+ }finally{blocks.fill(0);if(!committed)staged.clear();}
 }
-
 // Force octets, including NUL and 0x80..FF. Never use a UTF-8 QR helper here.
 qrcode.stringToBytes=s=>Array.from(s,c=>c.charCodeAt(0)&255);
 function encodeQR(bytes,ecc,version=0){const qr=qrcode(version,ecc);qr.addData(Array.from(bytes,b=>String.fromCharCode(b)).join(''),'Byte');qr.make();return qr;}
@@ -12977,19 +13086,26 @@ function saveBlob(blob,name){const url=URL.createObjectURL(blob),a=element('a');
 let currentFile=null,archive=null,collection=new Collector(),downloadURL=null,estimateToken=0,createBusy=false;
 function invalidate(){if(archive){for(const b of archive.blocks)b.fill(0);}archive=null;$('archive').replaceChildren();$('previewTitle').hidden=true;$('printBtn').hidden=true;$('printAdvice').hidden=true;status('createStatus','');}
 async function readInput(){if(currentFile){requireThat(currentFile.size<=MAX_INPUT,'File exceeds 8 MiB limit.');return new Uint8Array(await currentFile.arrayBuffer());}const bytes=enc.encode($('text').value);requireThat(bytes.length<=MAX_INPUT,'Text exceeds 8 MiB limit.');return bytes;}
-async function estimate(){const token=++estimateToken;let bytes,stored;try{bytes=await readInput();if(token!==estimateToken)return;const name=validName($('filename').value);stored=$('compress').checked?fflate.gzipSync(bytes,{level:6,mtime:0}):bytes;const length=stored.length+($('encrypt').checked?16:0),p=plan(length,name.length,$('ecc').value);$('fileInfo').textContent=`Source: ${currentFile?'file':'UTF-8 text'} · Original size: ${bytes.length.toLocaleString('en')} bytes`;$('estimate').textContent=`Estimated stored: ${length.toLocaleString('en')} bytes\nQR blocks: ${p.count} · Paper pages: ${p.count}\nVersion 40 maximum: ${CAP40[$('ecc').value]} bytes/code\nPayload capacity after headers: ${p.payload} bytes/code`;$('estimate').style.whiteSpace='pre-line';if($('base32Copy').checked){const pages=base32PageCount(length+p.count*(FIXED+name.length));$('estimate').textContent+=`\nAdditional Base32 pages: ${pages} · Total paper pages: ${p.count+pages}`;}if(p.count>MAX_BLOCKS)$('estimate').textContent+='\nToo many pages: reduce input.';}catch(e){if(token===estimateToken)$('estimate').textContent=e.message;}finally{bytes?.fill(0);if(stored!==bytes)stored?.fill(0);}}
+async function estimate(){const token=++estimateToken;let bytes,stored;try{bytes=await readInput();if(token!==estimateToken)return;const name=validName($('filename').value);stored=$('compress').checked?fflate.gzipSync(bytes,{level:6,mtime:0}):bytes;const length=stored.length+($('encrypt').checked?16:0),p=plan(length,name.length,$('ecc').value);$('fileInfo').textContent=`Source: ${currentFile?'file':'UTF-8 text'} · Original size: ${bytes.length.toLocaleString('en')} bytes`;$('estimate').textContent=`Estimated stored: ${length.toLocaleString('en')} bytes\nQR blocks: ${p.count} · Paper pages: ${p.count}\nVersion 40 maximum: ${CAP40[$('ecc').value]} bytes/code\nPayload capacity after headers: ${p.payload} bytes/code`;$('estimate').style.whiteSpace='pre-line';if($('mediumB32').checked){const info=transportPageInfo(length+p.count*(FIXED+name.length));$('estimate').textContent=`Estimated stored: ${length.toLocaleString('en')} bytes\nBase32 sheets: ${info.pages} · Transport lines: ${info.lines} · RS codewords: ${info.codewords}\nProtection: RS(255,215) — 40 erasures or 20 errors per codeword`;}if(p.count>MAX_BLOCKS)$('estimate').textContent+='\nToo many pages: reduce input.';}catch(e){if(token===estimateToken)$('estimate').textContent=e.message;}finally{bytes?.fill(0);if(stored!==bytes)stored?.fill(0);}}
 function selectFile(file){if(!file)return;currentFile=file;$('filename').value=file.name;$('text').value='';invalidate();estimate();}
 $('file').addEventListener('change',()=>selectFile($('file').files[0]));
 for(const event of ['dragover','drop'])window.addEventListener(event,e=>e.preventDefault());
 $('drop').addEventListener('dragover',()=>$('drop').classList.add('over'));$('drop').addEventListener('dragleave',()=>$('drop').classList.remove('over'));$('drop').addEventListener('drop',e=>{$('drop').classList.remove('over');if(createBusy)return;if(e.dataTransfer.files.length!==1){status('createStatus','Please drop exactly one file.',true);return;}selectFile(e.dataTransfer.files[0]);});
 $('text').addEventListener('input',()=>{currentFile=null;$('file').value='';invalidate();estimate();});
-for(const id of ['filename','compress','encrypt','ecc','base32Copy'])$(id).addEventListener('input',()=>{invalidate();$('passwordBox').hidden=!$('encrypt').checked;if(!$('encrypt').checked){$('password').value='';$('confirmPassword').value='';}estimate();});
+for(const id of ['filename','compress','encrypt','ecc','mediumQr','mediumB32'])$(id).addEventListener('input',()=>{invalidate();$('passwordBox').hidden=!$('encrypt').checked;if(!$('encrypt').checked){$('password').value='';$('confirmPassword').value='';}$('ecc').disabled=$('mediumB32').checked;$('mediumHint').textContent=$('mediumB32').checked?'Base32 sheets: 44 lines of 64+8 characters per A4 page, data column right-aligned, 25 mm left margin for hole punching. Maximum 128 blocks and 8 MiB input.':'One 130 mm QR code per A4 sheet. Up to version 40. Maximum 128 sheets and 8 MiB input in this implementation.';estimate();});
 for(const b of document.querySelectorAll('[data-tab]'))b.addEventListener('click',()=>{for(const other of document.querySelectorAll('[data-tab]')){const active=other===b;other.setAttribute('aria-pressed',String(active));$(other.dataset.tab).hidden=!active;} $('archive').hidden=b.dataset.tab!=='create';$('previewTitle').hidden=b.dataset.tab!=='create'||!archive;});
 $('specText').textContent=SPEC;
 $('copySpec').onclick=async()=>{try{await navigator.clipboard.writeText(SPEC);status('specStatus','Specification copied.');}catch{const r=document.createRange();r.selectNodeContents($('specText'));const s=getSelection();s.removeAllRanges();s.addRange(r);status('specStatus','Clipboard access unavailable. Specification selected: press Ctrl+C / Command+C.');}};
 $('saveSpec').onclick=()=>saveBlob(new Blob([SPEC],{type:'text/plain;charset=utf-8'}),'paperark-v1-specification.txt');
 async function renderArchive(a){
  const target=document.createDocumentFragment();
+ if($('mediumB32').checked){
+  status('createStatus','Building and verifying Base32 transport…');await tick();
+  target.append(renderBase32Sheets(a));
+  $('archive').replaceChildren(target);$('previewTitle').hidden=false;
+  requireThat([...$('archive').querySelectorAll('.sheet')].every(sheet=>sheet.scrollHeight<=Math.ceil(277*96/25.4)),'Print layout exceeds A4. Reset browser text scaling to 100% and recreate the archive.');
+  return;
+ }
  for(let i=0;i<a.blocks.length;i++){
  status('createStatus',`Rendering and verifying QR ${i+1} of ${a.blocks.length}…`);await tick();
  const qr=encodeQR(a.blocks[i],a.ecc),version=(qr.getModuleCount()-17)/4,cap=capacity(version,a.ecc);
@@ -13002,13 +13118,12 @@ async function renderArchive(a){
  const recovery=element('div',undefined,'recovery');recovery.append(element('h3','RECOVERY — NO ORIGINAL SOFTWARE REQUIRED'),element('p','Scan all sheets as raw QR bytes, in any order. Follow this specification. Keep every page and its instructions.'),element('pre',PRINT_SPEC));sheet.append(recovery);target.append(sheet);
  const toolbar=element('div',undefined,'sheet-tools'),button=element('button',`Save QR ${i+1} as PNG`);button.onclick=()=>qrCanvas(qr,8).toBlob(blob=>{if(blob)saveBlob(blob,`paperark-${a.id}-block-${i+1}.png`);},'image/png');toolbar.append(button);target.append(toolbar);
  }
- if($('base32Copy').checked)target.append(renderBase32Copy(a));
  $('archive').replaceChildren(target);$('previewTitle').hidden=false;requireThat([...$('archive').querySelectorAll('.sheet')].every(sheet=>sheet.scrollHeight<=Math.ceil(277*96/25.4)),'Print layout exceeds A4. Reset browser text scaling to 100% and recreate the archive.');
 }
 $('createBtn').onclick=async()=>{
  const inputs=[...$('create').querySelectorAll('input,textarea,select,button')];createBusy=true;inputs.forEach(e=>e.disabled=true);let bytes,pending;
  try{invalidate();requireThat(!$('encrypt').checked || $('password').value===$('confirmPassword').value,'Passwords do not match.');status('createStatus','Preparing archive…');await tick();bytes=await readInput();pending=await makeArchive(bytes,$('filename').value,$('compress').checked,$('encrypt').checked,$('password').value,$('ecc').value);await renderArchive(pending);archive=pending;pending=null;
- status('createStatus',`Archive created successfully. All QR images verified.\nOriginal: ${archive.originalSize} bytes · Stored: ${archive.storedSize} bytes\nStored/original: ${archive.originalSize?(100*archive.storedSize/archive.originalSize).toFixed(1)+'%':'n/a (empty file)'}\nPages: ${archive.blocks.length}${$('base32Copy').checked?` QR + ${$('archive').querySelectorAll('.base32-sheet').length} Base32 = ${archive.blocks.length+$('archive').querySelectorAll('.base32-sheet').length} total`:''}\nSHA-256: ${hex(archive.digest)}`);$('printBtn').hidden=false;$('printAdvice').hidden=false;const dense=archive.blocks.some(b=>b.length>CAP40[archive.ecc]*0.75);$('printAdvice').classList.toggle('warning',dense);$('printAdvice').textContent='Print A4 at 100% scale, black on white. Disable browser headers and footers. Keep all pages. Test a scan of the actual print before relying on it.'+(dense?' Dense QR warning: near version 40, modules are about 0.70 mm. Avoid shrinking the print; use a sharp 600 dpi scan.':'');
+ status('createStatus',`Archive created successfully. ${$('mediumB32').checked?'Base32 transport self-verified.':'All QR images verified.'}\nOriginal: ${archive.originalSize} bytes · Stored: ${archive.storedSize} bytes\nStored/original: ${archive.originalSize?(100*archive.storedSize/archive.originalSize).toFixed(1)+'%':'n/a (empty file)'}\nSheets: ${$('archive').querySelectorAll('.sheet').length} (${ $('mediumB32').checked?'Base32':'QR'})\nSHA-256: ${hex(archive.digest)}`);$('printBtn').hidden=false;$('printAdvice').hidden=false;const dense=archive.blocks.some(b=>b.length>CAP40[archive.ecc]*0.75);$('printAdvice').classList.toggle('warning',dense);$('printAdvice').textContent='Print A4 at 100% scale, black on white. Disable browser headers and footers. Keep all pages. Test a scan of the actual print before relying on it.'+(dense?' Dense QR warning: near version 40, modules are about 0.70 mm. Avoid shrinking the print; use a sharp 600 dpi scan.':'');
  }catch(e){if(pending)pending.blocks.forEach(b=>b.fill(0));invalidate();status('createStatus',e.message,true);}finally{bytes?.fill(0);$('password').value='';$('confirmPassword').value='';inputs.forEach(e=>e.disabled=false);createBusy=false;}
 };
 $('printBtn').onclick=()=>{if(archive)window.print();};
@@ -13058,68 +13173,63 @@ must be zero. Compression=1: gunzip decrypted bytes (or stored bytes if unencryp
 length AND original SHA-256 (FIPS 180-4); reject failures. Without password/key encrypted data is unrecoverable.
 Filename/sizes/original hash are public. Hashes detect corruption, not authorship. Never use filename as a path.
 Date, QR version and ECC are not wire fields. Implementations may impose resource limits. Keep all sheets.`;
-// Only extension-specific tests are added; the existing 45 tests stay intact.
+// Base32 transport tests: CRC32, Reed-Solomon, transport scenarios.
 async function runBase32Tests(test,mustReject){
- await test('Base32 RFC 4648 known vectors / correct padding',async()=>{
-  const vectors=[['',''],['f','MY======'],['fo','MZXQ===='],['foo','MZXW6==='],['foob','MZXW6YQ='],['fooba','MZXW6YTB'],['foobar','MZXW6YTBOI======']];
-  for(const [plain,encoded] of vectors){requireThat(base32Encode(enc.encode(plain))===encoded,'RFC encode vector differs');requireThat(equal(base32Decode(encoded),enc.encode(plain)),'RFC decode vector differs');}
- });
- await test('Base32 empty / one byte / non-multiple-of-five lengths',async()=>{
-  for(let n=0;n<=21;n++){const bytes=fixture(n),encoded=base32Encode(bytes);requireThat(equal(base32Decode(encoded),bytes),`Length ${n} differs`);requireThat(encoded.length===Math.ceil(n/5)*8,'Encoded size differs');}
- });
- await test('Base32 all 256 byte values',async()=>{const bytes=Uint8Array.from({length:256},(_,i)=>i);requireThat(equal(base32Decode(base32Encode(bytes)),bytes),'Binary data differs');});
- await test('Base32 whitespace / multiline / lowercase',async()=>{
-  const bytes=fixture(200),text=base32Encode(bytes).toLowerCase().split('').join(' \t\r\n\f');requireThat(equal(base32Decode(text),bytes),'Whitespace or ASCII case conversion differs');
- });
- await test('Base32 unexpected characters report original position',async()=>{
-  await mustReject(async()=>base32Decode(' \nM0======'),/Unexpected character at position 4/);
-  for(const char of ['0','1','8','9','-','!','ß','ſ','🗄️'])await mustReject(async()=>base32Decode('MY======'+char),/Unexpected character/);
- });
- await test('Base32 malformed / missing / internal padding rejected',async()=>{
-  for(const text of ['MY','MY=====','MY=======','M=Y=====','MY======AA======','A=======','AAA=====','AAAAAA==','========'])await mustReject(async()=>base32Decode(text),/padding/);
- });
- await test('Base32 non-zero padding bits rejected',async()=>{
-  for(const text of ['MZ======','MZXR====','MZXW7===','MZXW6YR='])await mustReject(async()=>base32Decode(text),/padding bits/);
- });
+ await test('CRC32 known vector',()=>{requireThat(crc32(enc.encode('123456789'))===0xCBF43926,'CRC32 vector mismatch');});
+ await test('RS(255,215) clean encode/decode',()=>{const gen=rsGeneratorPoly(RS_PARITY);const cw=rsEncode(fixture(RS_DATA),gen);requireThat(!Array.from(rsSyndromes(cw,RS_PARITY)).some(s=>s),'encode syndromes nonzero');requireThat(equal(rsDecode(cw,[]),cw),'clean decode differs');});
+ await test('RS corrects 20 random errors',()=>{const gen=rsGeneratorPoly(RS_PARITY);const cw=rsEncode(fixture(RS_DATA),gen);for(let t=0;t<25;t++){const c=cw.slice();const pos=new Set();while(pos.size<20)pos.add(Math.floor(Math.random()*RS_N));for(const p of pos)c[p]^=1+Math.floor(Math.random()*255);requireThat(equal(rsDecode(c,[]),cw),'trial '+t);}});
+ await test('RS corrects 40 erasures',()=>{const gen=rsGeneratorPoly(RS_PARITY);const cw=rsEncode(fixture(RS_DATA),gen);for(let t=0;t<25;t++){const c=cw.slice();const pos=new Set();while(pos.size<40)pos.add(Math.floor(Math.random()*RS_N));for(const p of pos)c[p]=0;requireThat(equal(rsDecode(c,[...pos]),cw),'trial '+t);}});
+ await test('RS corrects 10 errors + 20 erasures',()=>{const gen=rsGeneratorPoly(RS_PARITY);const cw=rsEncode(fixture(RS_DATA),gen);for(let t=0;t<25;t++){const c=cw.slice();const all=new Set();while(all.size<30)all.add(Math.floor(Math.random()*RS_N));const era=[...all].slice(0,20);for(const p of all)c[p]^=1+Math.floor(Math.random()*255);requireThat(equal(rsDecode(c,era),cw),'trial '+t);}});
+ await test('RS rejects beyond capacity',async()=>{const gen=rsGeneratorPoly(RS_PARITY);const cw=rsEncode(fixture(RS_DATA),gen);const c=cw.slice();const pos=new Set();while(pos.size<21)pos.add(Math.floor(Math.random()*RS_N));for(const p of pos)c[p]^=1+Math.floor(Math.random()*255);await mustReject(()=>rsDecode(c,[]));});
+ await test('Base32 transport clean roundtrip',()=>{const b=fixture(1409);const t=transportEncode(b);requireThat(t.lines.every(l=>l.length===B32_LINE),'line length');requireThat(equal(transportDecode(t.lines.join('\n')),b),'roundtrip differs');});
+ await test('Base32 transport corrects 1..6 fully damaged lines',()=>{const b=fixture(1409);const t=transportEncode(b);for(const bad of [1,2,3,4,5,6]){const lines=t.lines.slice();const idx=new Set();while(idx.size<bad)idx.add(Math.floor(Math.random()*lines.length));for(const i of idx){const d=lines[i].slice(0,B32_COLS);lines[i]=Array.from(d).map(ch=>B32[(B32.indexOf(ch)+7)%32]).join('')+lines[i].slice(B32_COLS);}requireThat(equal(transportDecode(lines.join('\n')),b),'damaged lines '+bad);}});
+ await test('Base32 transport corrects 30 scattered character errors',()=>{const b=fixture(1409);const t=transportEncode(b);const lines=t.lines.slice();for(let n=0;n<30;n++){const i=Math.floor(Math.random()*lines.length);const p=Math.floor(Math.random()*B32_COLS);const arr=Array.from(lines[i]);arr[p]=B32[(B32.indexOf(arr[p])+13)%32];lines[i]=arr.join('');}requireThat(equal(transportDecode(lines.join('\n')),b),'scattered errors');});
+ await test('Base32 transport detects and fills a deleted line',()=>{const b=fixture(1409);const t=transportEncode(b);const lines=t.lines.slice();lines.splice(5,1);requireThat(equal(transportDecode(lines.join('\n')),b),'deleted line');});
+ await test('Base32 transport tolerates shuffled lines',()=>{const b=fixture(1409);const t=transportEncode(b);const shuffled=t.lines.slice(20).concat(t.lines.slice(0,20));requireThat(equal(transportDecode(shuffled.join('\n')),b),'shuffled lines');});
+ await test('Base32 transport tolerates newline-free blob paste',()=>{const b=fixture(1409);const t=transportEncode(b);requireThat(equal(transportDecode(t.lines.join(' ')),b),'blob paste');});
+ await test('Base32 transport rejects over-capacity damage',async()=>{const b=fixture(1409);const t=transportEncode(b);const lines=t.lines.slice();for(let i=0;i<lines.length;i+=2){const arr=Array.from(lines[i]);for(let p=0;p<B32_COLS;p++)arr[p]=B32[(B32.indexOf(arr[p])+3)%32];lines[i]=arr.join('');}await mustReject(()=>transportDecode(lines.join('\n')));});
+ await test('Base32 transport rejects invalid characters',async()=>{await mustReject(()=>transportDecode('MY====== !!'),/Invalid characters/);await mustReject(()=>transportDecode('0189'.repeat(20)),/Invalid characters/);});
  for(const compression of [false,true])for(const encryption of [false,true])await test(`Base32 archive roundtrip / gzip=${compression} / AES=${encryption}`,async()=>{
   const input=fixture(4200),a=await makeArchive(input,'base32.bin',compression,encryption,'base32 test 🔑','M'),c=new Collector();
-  try{const text=archiveBase32(a.blocks);requireThat(equal(base32Decode(text),concat(...a.blocks)),'Transport differs from exact QR blocks');await importBase32(text,c);requireThat(c.missing().length===0,'Missing blocks');const out=await restoreArchive(c,'base32 test 🔑');requireThat(equal(out,input),'Original bytes differ');out.fill(0);}finally{c.clear();a.blocks.forEach(b=>b.fill(0));}
+  try{const bytes=concat(...a.blocks);const t=transportEncode(bytes);requireThat(equal(transportDecode(t.lines.join('\n')),bytes),'transport differs from exact QR blocks');await importBase32(t.lines.join('\n'),c);requireThat(c.missing().length===0,'Missing blocks');const out=await restoreArchive(c,'base32 test 🔑');requireThat(equal(out,input),'Original bytes differ');out.fill(0);bytes.fill(0);}finally{c.clear();a.blocks.forEach(b=>b.fill(0));}
  });
- await test('Base32 empty original archive roundtrip',async()=>{const a=await makeArchive(new Uint8Array(),'empty.txt',false,false,'','M'),c=new Collector();await importBase32(archiveBase32(a.blocks),c);const out=await restoreArchive(c,'');requireThat(out.length===0,'Empty original differs');c.clear();});
- await test('Base32 and decoded QR contain identical block bytes',async()=>{
-  const a=await makeArchive(fixture(64),'same.bin',false,false,'','M');requireThat(equal(base32Decode(archiveBase32(a.blocks)),decodeCanvas(qrCanvas(encodeQR(a.blocks[0],'M'),5))),'Base32 and QR bytes differ');
+ await test('Base32 empty original archive roundtrip',async()=>{const a=await makeArchive(new Uint8Array(),'empty.txt',false,false,'','M'),c=new Collector();const bytes=concat(...a.blocks);await importBase32(transportEncode(bytes).lines.join('\n'),c);const out=await restoreArchive(c,'');requireThat(out.length===0,'Empty original differs');c.clear();bytes.fill(0);});
+ await test('Base32 sheet geometry: right-aligned data, punch margin, page count',async()=>{
+  const input=fixture(4200),a=await makeArchive(input,'pages.bin',false,false,'','M');
+  const fragment=renderBase32Sheets(a);
+  const sheets=[...fragment.querySelectorAll('.sheet.base32-sheet')];
+  const bytes=concat(...a.blocks);
+  const info=transportPageInfo(bytes.length);
+  requireThat(sheets.length===info.pages,'sheet count differs');
+  const dataEls=[...fragment.querySelectorAll('.base32-data')];
+  const allLines=dataEls.flatMap(el=>el.textContent.split('\n'));
+  requireThat(allLines.every(l=>l.length===B32_LINE+1),'printed lines must be 64+space+8');
+  requireThat(sheets.every(s=>s.querySelector('.base32-data')!==null),'every sheet carries data');
+  requireThat(sheets.every(s=>[...s.querySelectorAll('.stamp')].some(el=>el.textContent.includes('Archive ID: '+a.id))),'sheet identification missing');
+  requireThat(sheets.every(s=>s.className.includes('base32-sheet')),'base32-sheet class missing (drives punch margin + right alignment)');
+  bytes.fill(0);a.blocks.forEach(b=>b.fill(0));
  });
- await test('Base32 multipage output / 64 columns / exact reassembly',async()=>{
-  const input=fixture(4200),a=await makeArchive(input,'pages.bin',false,false,'','M'),text=archiveBase32(a.blocks),pages=base32Pages(text),c=new Collector();
-  requireThat(pages.length>1 && pages.length===base32PageCount(concat(...a.blocks).length),'Page count incorrect');
-  const lines=pages.join('\n').split('\n');requireThat(lines.slice(0,-1).every(line=>line.length===64),'Non-final line not 64 columns');requireThat(lines.at(-1).length<=64,'Last line too long');
-  requireThat(pages.every(page=>page.split('\n').length<=BASE32_LINES_PER_PAGE),'Page too long');requireThat(pages.join('').replace(/\n/g,'')===text,'Page breaks altered stream');
-  const fragment=renderBase32Copy(a),printed=[...fragment.querySelectorAll('.base32-data')].map(el=>el.textContent);
-  requireThat(printed.join('\n')===pages.join('\n'),'Printed data differs');requireThat([...fragment.querySelectorAll('.base32-label')].filter(el=>el.textContent.includes('Archive ID: '+a.id)).length===pages.length,'Missing page identification');
-  await importBase32(printed.join('\n\f\n'),c);requireThat(equal(await restoreArchive(c,''),input),'Multipage restore differs');c.clear();
- });
- await test('Base32 page boundary / padding only at stream end',async()=>{
-  for(const length of [1275,1280,1281]){const bytes=fixture(length),text=base32Encode(bytes),pages=base32Pages(text);requireThat(pages.length===base32PageCount(length),'Boundary page count');requireThat(equal(base32Decode(pages.join('\n')),bytes),'Boundary bytes differ');requireThat(!pages.slice(0,-1).some(page=>page.includes('=')),'Intermediate padding');}
- });
- await test('Base32 damaged data rejected by existing block checksum',async()=>{
-  const a=await makeArchive(fixture(50),'damage.bin',false,false,'','M'),text=archiveBase32(a.blocks),position=250,changed=text.slice(0,position)+(text[position]==='A'?'B':'A')+text.slice(position+1),c=new Collector();
-  await mustReject(()=>importBase32(changed,c),/SHA-256/);requireThat(c.blocks.size===0,'Failed import changed collection');
- });
- await test('Base32 invalid container / truncated block / trailing bytes',async()=>{
-  const a=await makeArchive(fixture(50),'bad.bin',false,false,'','M'),bytes=concat(...a.blocks),bad=bytes.slice();bad[4]=2;
-  for(const invalid of [new Uint8Array(),bytes.slice(0,20),bytes.slice(0,-1),concat(bytes,new Uint8Array([0])),bad])await mustReject(()=>importBase32(base32Encode(invalid),new Collector()));
- });
- await test('Base32 QR duplicates / missing blocks / atomic mixed-archive rejection',async()=>{
-  const a=await makeArchive(fixture(4200),'merge.bin',false,false,'','M'),c=new Collector();await c.add(a.blocks[0]);
-  await importBase32(archiveBase32([a.blocks[0]]),c);requireThat(c.missing().length>0,'Missing blocks not detected');await mustReject(()=>restoreArchive(c,''),/Missing blocks/);
-  const other=await makeArchive(fixture(1),'other.bin',false,false,'','M');await mustReject(()=>importBase32(archiveBase32([...a.blocks,other.blocks[0]]),c),/Different Archive ID/);requireThat(c.blocks.size===1,'Failed import changed existing QR blocks');
-  const result=await importBase32(archiveBase32(a.blocks),c);requireThat(result.duplicates===1 && result.accepted===a.blocks.length-1,'Duplicate accounting differs');requireThat(equal(await restoreArchive(c,''),fixture(4200)),'Mixed transport restore differs');c.clear();
+ await test('Base32 import merges with QR blocks; duplicates ignored',async()=>{
+  const a=await makeArchive(fixture(4200),'merge.bin',false,false,'','M'),c=new Collector();
+  await c.add(a.blocks[0]);
+  const bytes=concat(...a.blocks);const text=transportEncode(bytes).lines.join('\n');
+  const result=await importBase32(text,c);
+  requireThat(result.duplicates===1&&result.accepted===a.blocks.length-1,'duplicate accounting differs');
+  requireThat(equal(await restoreArchive(c,''),fixture(4200)),'mixed transport restore differs');
+  c.clear();bytes.fill(0);a.blocks.forEach(b=>b.fill(0));
  });
  await test('Base32 encrypted archive retains GCM password verification',async()=>{
-  const a=await makeArchive(fixture(50),'secret.bin',true,true,'correct','M'),c=new Collector();await importBase32(archiveBase32(a.blocks),c);await mustReject(()=>restoreArchive(c,'wrong'),/Decryption failed/);c.clear();
+  const a=await makeArchive(fixture(50),'secret.bin',true,true,'correct','M'),c=new Collector();
+  const bytes=concat(...a.blocks);
+  await importBase32(transportEncode(bytes).lines.join('\n'),c);
+  await mustReject(()=>restoreArchive(c,'wrong'),/Decryption failed/);c.clear();bytes.fill(0);a.blocks.forEach(b=>b.fill(0));
  });
  await test('Base32 archive retains original SHA-256 verification',async()=>{
-  const a=await makeArchive(fixture(50),'hash.bin',false,false,'','M'),bad=a.blocks[0].slice();bad[bad.length-1]^=1;bad.set(await checksum(bad),112);const c=new Collector();await importBase32(archiveBase32([bad]),c);await mustReject(()=>restoreArchive(c,''),/Original SHA-256/);c.clear();
+  const a=await makeArchive(fixture(50),'hash.bin',false,false,'','M');
+  const bad=a.blocks[0].slice();bad[bad.length-1]^=1;bad.set(await checksum(bad),112);
+  const c=new Collector();
+  await importBase32(transportEncode(bad).lines.join('\n'),c);
+  await mustReject(()=>restoreArchive(c,''),/Original SHA-256/);c.clear();
  });
 }
 
