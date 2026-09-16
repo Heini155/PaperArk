@@ -13017,9 +13017,17 @@ function transportDecode(text){
 const B32_TRANSPORT_RECOVERY=`BASE32 TRANSPORT v2 - RECOVERY (no original software required)
 Each line: 96 data characters, one space, 8 CRC characters.
 Alphabet: ABCDEFGHIJKLMNOPQRSTUVWXYZ234567 (RFC 4648, no padding).
-The CRC field carries a 13-bit line number + 27-bit CRC32 over the line
-number and data. Protection: RS(255,215) over GF(256), primitive
-polynomial 0x11d, generator 2; codeword symbols interleaved across lines.
+CRC field: 8 characters = 5 bytes: b0=num>>5; b1=((num&31)<<3)|(crc>>24);
+b2=(crc>>16)&255; b3=(crc>>8)&255; b4=crc&255. num is the 13-bit
+line number, 0-based; crc = CRC32 of the 2-byte big-endian line number
+followed by the 96 ASCII data characters, masked to 27 bits.
+Protection: RS(255,215) over GF(256), primitive polynomial 0x11d,
+generator 2. Layout: the payload (below) is zero-padded to D*215 bytes
+and split into D chunks of 215; each chunk gets 40 parity bytes = one
+255-byte codeword. D = ceil(ceil((4+L)/215)/4)*4, rounded up to a
+multiple of 4. Codewords are interleaved symbol-wise: symbol j of
+codeword c is placed at byte position j*D + c before Base32 encoding,
+so consecutive bytes cycle through codewords 0..D-1.
 A fully damaged line costs 40 erasure bytes - inside one codeword's
 40-erasure budget. Scattered character errors: up to 20 bytes/codeword.
 To recover: read every readable character from all sheets, ignore the
@@ -13027,11 +13035,12 @@ printed column space, paste all lines into the restore field (order and
 line breaks optional; line numbers restore the sequence). CRC failures
 become erasures and are corrected by Reed-Solomon; deleted lines are
 detected by their missing line numbers. Do not repair characters by
-hand - paste what you see. The decoded stream is: 4-byte big-endian
-length L, then L bytes of concatenated PaperArk v1 blocks, then zero
-padding. Parse blocks per the PaperArk v1 spec on QR sheets: each block
-is 144+N+P bytes with N,P as unsigned big-endian 16-bit integers at
-block offsets 108 and 110. Keep every sheet.`;
+hand - paste what you see. Deinterleave, correct, then concatenate the
+215 data bytes of codewords 0..D-1: a 4-byte big-endian length L, then
+L bytes of concatenated PaperArk v1 blocks, then zero padding. Parse
+blocks per the PaperArk v1 spec on QR sheets: each block is 144+N+P
+bytes with N,P as unsigned big-endian 16-bit integers at block offsets
+108 and 110. Keep every sheet.`;
 function renderBase32Sheets(a){
  const bytes=concat(...a.blocks);
  let t;
