@@ -69,7 +69,8 @@ footer{font-size:12px;color:var(--dim);padding-top:0}
 .base32-sheet{padding:3mm 8mm 3mm 25mm}
 .base32-sheet .base32-label{font:8.5pt/1.25 Arial,sans-serif;margin:1mm 0}
 .base32-sheet .base32-instructions{font:7pt/1.15 "Courier New",Consolas,monospace;white-space:pre-wrap;margin:2mm 0;overflow-wrap:normal}
-.base32-sheet .base32-data{font:8.5pt/1.3 "Courier New",Consolas,monospace;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;letter-spacing:0;text-align:left;white-space:pre;overflow-wrap:normal;word-break:normal;color:#000;background:#fff;margin:2mm 0 0 auto;width:max-content}
+.base32-sheet .base32-continuation{font:8pt/1.3 Arial,sans-serif;margin:2mm 0 0;padding:1.5mm 0;border-top:0.5pt solid #000;border-bottom:0.5pt solid #000}
+.base32-sheet .base32-data{font:8.5pt/1.3 "Courier New",Consolas,monospace;font-variant-ligatures:none;font-feature-settings:"liga" 0,"calt" 0;letter-spacing:0;text-align:left;white-space:pre;overflow-wrap:normal;word-break:normal;color:#000;background:#fff;margin:2mm 0 0 0}
 #base32Input{font-family:"Courier New",Consolas,monospace;font-variant-ligatures:none}
 @media(max-width:760px){header{display:block}.local{margin-top:16px}main{padding:14px}.panel{padding:18px}.grid{grid-template-columns:1fr}#archive{overflow:auto}.sheet{margin-left:0}nav button{font-size:12px}}
 @page{size:A4;margin:10mm}
@@ -12934,7 +12935,13 @@ async function restoreArchive(collection,password){
 // (1) line-number-anchored reconstruction with erased lines filled as
 // erasures, then (2) naive trusted chunking for scattered OCR errors.
 const B32='ABCDEFGHIJKLMNOPQRSTUVWXYZ234567';
-const B32_COLS=64,B32_CRC_COLS=8,B32_LINE=72,B32_LINES_PER_PAGE=44;
+const B32_COLS=64,B32_CRC_COLS=8,B32_LINE=72;
+/* Sheet 1 carries the full recovery instructions and therefore fewer data
+   lines; later sheets use a compact header and carry more. Line numbers in
+   the CRC field are global, so page boundaries are a print concern only. */
+const B32_FIRST_PAGE_LINES=40,B32_NEXT_PAGE_LINES=56;
+function b32PageCount(lines){return lines<=B32_FIRST_PAGE_LINES?1:1+Math.ceil((lines-B32_FIRST_PAGE_LINES)/B32_NEXT_PAGE_LINES);}
+function b32SplitPages(lines){const pages=[lines.slice(0,B32_FIRST_PAGE_LINES)];const rest=lines.slice(B32_FIRST_PAGE_LINES);if(rest.length){const n=Math.ceil(rest.length/B32_NEXT_PAGE_LINES);const per=Math.ceil(rest.length/n);for(let i=0;i<n;i++)pages.push(rest.slice(i*per,(i+1)*per));}return pages;}
 const RS_DATA=215,RS_PARITY=40,RS_N=255;
 const CRC32_TABLE=(()=>{const t=new Uint32Array(256);for(let n=0;n<256;n++){let c=n;for(let k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c;}return t;})();
 function crc32(bytes){let c=0xFFFFFFFF;for(const b of bytes)c=CRC32_TABLE[(c^b)&255]^(c>>>8);return(c^0xFFFFFFFF)>>>0;}
@@ -12959,8 +12966,8 @@ function b32NoPad(bytes){let buffer=0,bits=0,out='';for(const byte of bytes){buf
 function b32ToBytes(s){const out=[];let buffer=0,bits=0;for(const ch of s){const v=B32.indexOf(ch);if(v<0)return null;buffer=(buffer<<5)|v;bits+=5;if(bits>=8){bits-=8;out.push((buffer>>>bits)&255);}}return out;}
 function crcField(data,lineNum){const c=crc32(concat(new Uint8Array([lineNum>>>8,lineNum&255]),enc.encode(data)))&0x07FFFFFF;return b32NoPad(new Uint8Array([lineNum>>>5,((lineNum&31)<<3)|(c>>>24),(c>>>16)&255,(c>>>8)&255,c&255]));}
 function crcCheck(line){if(line.length!==B32_LINE)return -1;const f=b32ToBytes(line.slice(B32_COLS));if(!f||f.length!==5)return -1;const lineNum=(f[0]<<5)|(f[1]>>>3);const crc=((f[1]&7)<<24)|(f[2]<<16)|(f[3]<<8)|f[4];const c=crc32(concat(new Uint8Array([lineNum>>>8,lineNum&255]),enc.encode(line.slice(0,B32_COLS))))&0x07FFFFFF;return c===crc?lineNum:-1;}
-function transportEncode(blocks){const innerLen=4+blocks.length;const chunks=Math.ceil(innerLen/RS_DATA);const D=Math.ceil(chunks/8)*8;/* D multiple of 8 => D*408 chars is an exact multiple of 64: every printed line is full, no '=' padding exists, so a damaged final line behaves exactly like any other line. */const padded=new Uint8Array(D*RS_DATA);const v=new DataView(padded.buffer);v.setUint32(0,blocks.length);padded.set(blocks,4);requireThat(Math.ceil(D*RS_N*8/5)<=8191*B32_COLS,'Base32 transport exceeds 13-bit line numbering.');const gen=rsGeneratorPoly(RS_PARITY);const inter=new Uint8Array(D*RS_N);for(let c=0;c<D;c++){const cw=rsEncode(padded.subarray(c*RS_DATA,(c+1)*RS_DATA),gen);for(let j=0;j<RS_N;j++)inter[j*D+c]=cw[j];}let text=b32NoPad(inter);requireThat(text.length%B32_COLS===0,'transport line invariant violated');const lines=[];for(let i=0;i<text.length;i+=B32_COLS){const d=text.slice(i,i+B32_COLS);lines.push(d+crcField(d,lines.length));}return{lines,pages:Math.ceil(lines.length/B32_LINES_PER_PAGE),codewords:D};}
-function transportPageInfo(blocksLen){const chunks=Math.ceil((4+blocksLen)/RS_DATA);const D=Math.ceil(chunks/8)*8;const lines=D*RS_N*8/5/B32_COLS;return{pages:Math.ceil(lines/B32_LINES_PER_PAGE),lines,codewords:D};}
+function transportEncode(blocks){const innerLen=4+blocks.length;const chunks=Math.ceil(innerLen/RS_DATA);const D=Math.ceil(chunks/8)*8;/* D multiple of 8 => D*408 chars is an exact multiple of 64: every printed line is full, no '=' padding exists, so a damaged final line behaves exactly like any other line. */const padded=new Uint8Array(D*RS_DATA);const v=new DataView(padded.buffer);v.setUint32(0,blocks.length);padded.set(blocks,4);requireThat(Math.ceil(D*RS_N*8/5)<=8191*B32_COLS,'Base32 transport exceeds 13-bit line numbering.');const gen=rsGeneratorPoly(RS_PARITY);const inter=new Uint8Array(D*RS_N);for(let c=0;c<D;c++){const cw=rsEncode(padded.subarray(c*RS_DATA,(c+1)*RS_DATA),gen);for(let j=0;j<RS_N;j++)inter[j*D+c]=cw[j];}let text=b32NoPad(inter);requireThat(text.length%B32_COLS===0,'transport line invariant violated');const lines=[];for(let i=0;i<text.length;i+=B32_COLS){const d=text.slice(i,i+B32_COLS);lines.push(d+crcField(d,lines.length));}return{lines,pages:b32PageCount(lines.length),codewords:D};}
+function transportPageInfo(blocksLen){const chunks=Math.ceil((4+blocksLen)/RS_DATA);const D=Math.ceil(chunks/8)*8;const lines=D*RS_N*8/5/B32_COLS;return{pages:b32PageCount(lines),lines,codewords:D};}
 function scanLines(s){const found=new Map();for(let i=0;i+B32_LINE<=s.length;i++){const line=s.slice(i,i+B32_LINE);const num=crcCheck(line);if(num>=0&&!found.has(num))found.set(num,line.slice(0,B32_COLS));}return found;}
 function decodeTransportFields(fields){
  const chars=[],erased=[];
@@ -13032,19 +13039,23 @@ function renderBase32Sheets(a){
   t=transportEncode(bytes);
   requireThat(equal(transportDecode(t.lines.join('\n')),bytes),'Base32 transport self-verification failed.');
  }finally{bytes.fill(0);}
- const pages=[];
- for(let i=0;i<t.lines.length;i+=B32_LINES_PER_PAGE)pages.push(t.lines.slice(i,i+B32_LINES_PER_PAGE));
+ const pages=b32SplitPages(t.lines);
  const fragment=document.createDocumentFragment();
+ let lineOffset=0;
  pages.forEach((lines,index)=>{
+  const first=index===0;
   const sheet=element('article',undefined,'sheet base32-sheet');
+  const start=lineOffset+1,end=lineOffset+lines.length;
+  lineOffset=end;
   sheet.append(element('h2','PAPERARK DIGITAL ARCHIVE — BASE32 TRANSPORT'),
    element('div',`Format v1 · Created ${a.date} · Sheet ${index+1} of ${pages.length} (Base32) · Archive ID: ${a.id}`,'stamp'),
    element('div',`Filename: ${a.name}`,'metadata filename'),
    element('div',`Original: ${a.originalSize} bytes · Stored: ${a.storedSize} bytes · Compression: ${a.compression?'gzip / DEFLATE':'none'} · Encryption: ${a.encryption?'AES-256-GCM; password required':'none'}`,'metadata'),
-   element('div',`SHA-256: ${hex(a.digest)}`,'hash'),
-   element('pre',B32_TRANSPORT_RECOVERY,'base32-instructions'),
-   element('pre',lines.map(l=>l.slice(0,B32_COLS)+' '+l.slice(B32_COLS)).join('\n'),'base32-data'),
-   element('div',`Lines ${index*B32_LINES_PER_PAGE+1}–${Math.min((index+1)*B32_LINES_PER_PAGE,t.lines.length)} of ${t.lines.length} · 64 data + 8 CRC characters per line · RS(255,215) corrects 40 erasures per codeword · Keep every sheet`,'block-caption'));
+   element('div',`SHA-256: ${hex(a.digest)}`,'hash'));
+  if(first)sheet.append(element('pre',B32_TRANSPORT_RECOVERY,'base32-instructions'));
+  else sheet.append(element('div','Base32 transport v2 · 64 data + 8 CRC characters per line · RS(255,215) over GF(256) · Full recovery instructions on sheet 1 · Keep every sheet','base32-continuation'));
+  sheet.append(element('pre',lines.map(l=>l.slice(0,B32_COLS)+' '+l.slice(B32_COLS)).join('\n'),'base32-data'),
+   element('div',`Lines ${start}–${end} of ${t.lines.length} · Sheet ${index+1} of ${pages.length}`,'block-caption'));
   fragment.append(sheet);
  });
  return fragment;
@@ -13092,7 +13103,7 @@ $('file').addEventListener('change',()=>selectFile($('file').files[0]));
 for(const event of ['dragover','drop'])window.addEventListener(event,e=>e.preventDefault());
 $('drop').addEventListener('dragover',()=>$('drop').classList.add('over'));$('drop').addEventListener('dragleave',()=>$('drop').classList.remove('over'));$('drop').addEventListener('drop',e=>{$('drop').classList.remove('over');if(createBusy)return;if(e.dataTransfer.files.length!==1){status('createStatus','Please drop exactly one file.',true);return;}selectFile(e.dataTransfer.files[0]);});
 $('text').addEventListener('input',()=>{currentFile=null;$('file').value='';invalidate();estimate();});
-for(const id of ['filename','compress','encrypt','ecc','mediumQr','mediumB32'])$(id).addEventListener('input',()=>{invalidate();$('passwordBox').hidden=!$('encrypt').checked;if(!$('encrypt').checked){$('password').value='';$('confirmPassword').value='';}$('ecc').disabled=$('mediumB32').checked;$('mediumHint').textContent=$('mediumB32').checked?'Base32 sheets: 44 lines of 64+8 characters per A4 page, data column right-aligned, 25 mm left margin for hole punching. Maximum 128 blocks and 8 MiB input.':'One 130 mm QR code per A4 sheet. Up to version 40. Maximum 128 sheets and 8 MiB input in this implementation.';estimate();});
+for(const id of ['filename','compress','encrypt','ecc','mediumQr','mediumB32'])$(id).addEventListener('input',()=>{invalidate();$('passwordBox').hidden=!$('encrypt').checked;if(!$('encrypt').checked){$('password').value='';$('confirmPassword').value='';}$('ecc').disabled=$('mediumB32').checked;$('mediumHint').textContent=$('mediumB32').checked?'Base32 sheets: data left-aligned with the instructions, 25 mm left margin for hole punching. Sheet 1 carries the full recovery instructions and 40 lines; later sheets use a compact header and carry up to 56 lines, balanced so no sheet is nearly empty. Maximum 128 blocks and 8 MiB input.':'One 130 mm QR code per A4 sheet. Up to version 40. Maximum 128 sheets and 8 MiB input in this implementation.';estimate();});
 for(const b of document.querySelectorAll('[data-tab]'))b.addEventListener('click',()=>{for(const other of document.querySelectorAll('[data-tab]')){const active=other===b;other.setAttribute('aria-pressed',String(active));$(other.dataset.tab).hidden=!active;} $('archive').hidden=b.dataset.tab!=='create';$('previewTitle').hidden=b.dataset.tab!=='create'||!archive;});
 $('specText').textContent=SPEC;
 $('copySpec').onclick=async()=>{try{await navigator.clipboard.writeText(SPEC);status('specStatus','Specification copied.');}catch{const r=document.createRange();r.selectNodeContents($('specText'));const s=getSelection();s.removeAllRanges();s.addRange(r);status('specStatus','Clipboard access unavailable. Specification selected: press Ctrl+C / Command+C.');}};

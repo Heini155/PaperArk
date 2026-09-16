@@ -41,7 +41,7 @@ Beide Medien tragen exakt dieselben PaperArk-v1-Blöcke. Ein Archiv kann vollst�
 
 **QR-Seiten:** Ein 130 mm großer QR-Code mit Quiet Zone von vier Modulen pro A4-Seite. Vorschau zeigt QR-Version, Kapazität, verwendete Bytes, Nutzungsgrad und Blocknummer.
 
-**Base32-Seiten:** 44 Zeilen à 64 Datenzeichen + 8 CRC-Zeichen pro A4-Seite. Der Datenblock ist rechtsbündig gesetzt; der linke Rand von 25 mm bleibt frei für Lochung.
+**Base32-Seiten:** Der Datenblock ist **links bündig** mit der Anleitung gesetzt; der linke Rand von 25 mm bleibt frei für Lochung. Seite 1 trägt die vollständige Wiederherstellungsanleitung und 40 Datenzeilen; die Folgeseiten haben einen kompakten Kopf und tragen bis zu 56 Zeilen. Die Zeilen auf den Folgeseiten werden gleichmäßig verteilt, damit keine halbleere Seite entsteht. Jede Zeile: 64 Datenzeichen + 8 CRC-Zeichen.
 
 **Druckeinstellungen:** A4, tatsächliche Größe / 100 %, Schwarz auf Weiß, Browser-Kopf- und Fußzeilen deaktivieren. Alle Seiten aufbewahren. Einen echten Ausdruck vor der Archivierung zurückscannen und überprüfen; für dichte Codes sind scharfe Scans mit 600 dpi empfehlenswert.
 
@@ -126,7 +126,7 @@ Der dokumentierte Prüfstand umfasst **68 bestandene Selbsttests in Chromium**, 
 - SHA-256- und CRC32-Testvektoren, Dekompressionsbegrenzung und Prüfung auf externe Ressourcenabrufe.
 - Reed-Solomon: 20 Fehler, 40 Erasures, 10 Fehler + 20 Erasures, Ablehnung jenseits der Korrekturkapazität.
 - Base32-Transport: Roundtrips, 1–6 vollständig beschädigte Zeilen, 30 verstreute Zeichenfehler, gelöschte Zeilen, vertauschte Zeilen, Zusammenfügen ohne Zeilenumbrüche, Ablehnung bei Überlastung und ungültigen Zeichen.
-- Base32-Blattgeometrie (rechtsbündiger Datenblock, Lochrand, Seitenzahl) und Mischbetrieb mit QR-Blöcken im selben Collector.
+- Base32-Blattgeometrie (linksbündiger Datenblock, Lochrand, variable Seitenaufteilung) und Mischbetrieb mit QR-Blöcken im selben Collector.
 
 Zusätzlich rekonstruierte ein separater Python-Decoder Testarchive in allen vier Kompressions-/Verschlüsselungskombinationen ohne PaperArk-Code. Die A4-Geometrie wurde mit Verschlüsselung und einem maximal langen Dateinamen geprüft. Die Entwicklungswerkzeuge werden zur Nutzung nicht benötigt und gehören nicht zum Repository.
 
